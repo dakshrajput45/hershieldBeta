@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "373353895913",
+    "project_id": "hershield-ef18c",
+    "storage_bucket": "hershield-ef18c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:373353895913:android:6a4eb74bd41f5142219d78",
+        "android_client_info": {
+          "package_name": "com.example.hershield"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAfA6lTMNNUuj_vN3VpMNTTJuUKEPqvohg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
