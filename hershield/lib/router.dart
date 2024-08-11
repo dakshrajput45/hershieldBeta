@@ -25,7 +25,6 @@ class RouterConfig {
         name: routeNames.auth,
         builder: (context, state) => const AuthView(),
       ),
-    
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
           return HomeView(
