@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hershield/router.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:backend_shield/apis/auth/user_auth.dart';
 
 class AuthView extends StatefulWidget {
   const AuthView({super.key});
@@ -25,6 +27,8 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
   int _resendOtpSecondsRemaining = 60;
   bool _isLoading = false;
 
+  final HSUserAuthSDK _hsUserAuthSDK = HSUserAuthSDK();
+
   void handleLogin(int val) {
     updateLoginStatus(val); // Update isLoggedIn to true
   }
@@ -45,6 +49,7 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
     });
     super.initState();
   }
+
   @override
   void dispose() {
     _timer?.cancel(); // Cancel the timer when the widget is disposed
@@ -86,7 +91,7 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
                                  height: 150,
                               ),
                               Text(
-                                "Welcome to hershield",
+                                "Welcome to HerShield",
                                 style:
                                     Theme.of(context).textTheme.headlineMedium,
                               ),
@@ -153,6 +158,7 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
                                                 });
                                                 var phoneNumber =
                                                     '+91${_phoneController.value.text.trim()}';
+                                                print(phoneNumber);
                                                 // Simulate sending OTP
                                                 await Future.delayed(
                                                     const Duration(seconds: 2));
@@ -179,10 +185,17 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
                                 children: [
                                   Expanded(
                                     child: OutlinedButton(
-                                      onPressed: () {
-                                        // Simulate Google sign-in
-                                        handleLogin(2);
-                                        context.goNamed(routeNames.sos);
+                                      onPressed: () async {
+                                        // Google Sign Up Function Added here (Same function used for Log In)
+                                        User? user =
+                                            await _hsUserAuthSDK.googleSignUp();
+                                        print(user);
+                                        handleLogin(0);
+                                        if (user != null) {
+                                          context.goNamed(routeNames.sos);
+                                        } else {
+                                          print("Google Login Failed");
+                                        }
                                       },
                                       child: const Text("Sign in with Google"),
                                     ),

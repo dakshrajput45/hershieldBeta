@@ -1,0 +1,14 @@
+backend_shield/linux/flutter/generated_plugin_registrant.cc
+backend_shield/linux/flutter/generated_plugin_registrant.h
+backend_shield/linux/flutter/generated_plugins.cmake
+backend_shield/macos/Flutter/GeneratedPluginRegistrant.swift
+backend_shield/windows/flutter/generated_plugin_registrant.cc
+backend_shield/windows/flutter/generated_plugin_registrant.h
+backend_shield/windows/flutter/generated_plugins.cmake
+hershield/linux/flutter/generated_plugin_registrant.cc
+hershield/linux/flutter/generated_plugin_registrant.h
+hershield/linux/flutter/generated_plugins.cmake
+hershield/macos/Flutter/GeneratedPluginRegistrant.swift
+hershield/windows/flutter/generated_plugin_registrant.cc
+hershield/windows/flutter/generated_plugin_registrant.h
+hershield/windows/flutter/generated_plugins.cmake
