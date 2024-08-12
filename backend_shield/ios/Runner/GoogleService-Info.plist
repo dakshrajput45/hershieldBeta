@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>373353895913-k0d8idbo53fqipgpfdbnf8tl78g76dip.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.373353895913-k0d8idbo53fqipgpfdbnf8tl78g76dip</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>373353895913-21meg5hlvve0essgfkf0alb3s7ehc2on.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAx1GrCbk5GC6fKbc0sJfoMka8VPiWC1Xk</string>
+	<key>GCM_SENDER_ID</key>
+	<string>373353895913</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.hershield</string>
+	<key>PROJECT_ID</key>
+	<string>hershield-ef18c</string>
+	<key>STORAGE_BUCKET</key>
+	<string>hershield-ef18c.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:373353895913:ios:586882422be84d85219d78</string>
+</dict>
+</plist>
