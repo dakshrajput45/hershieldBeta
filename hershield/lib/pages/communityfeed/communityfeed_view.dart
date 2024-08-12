@@ -13,7 +13,7 @@ class _CommunityFeedViewState extends State<CommunityFeedView> {
   Widget build(BuildContext context) {
     return const Scaffold(
         body: Center(
-      child: Text("community feed"),
+      child: Text("communityfeed"),
     ));
   }
 }
