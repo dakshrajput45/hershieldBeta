@@ -74,18 +74,17 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
                     : Form(
                         key: _formKey,
                         child: SingleChildScrollView(
-                          keyboardDismissBehavior:
-                              ScrollViewKeyboardDismissBehavior.onDrag,
+                          // keyboardDismissBehavior:
+                          //     ScrollViewKeyboardDismissBehavior.onDrag,
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              // Image.asset(
-                              //   'assets/vivah_logo.png', // Placeholder for the logo
-                              //   height: 100,
-                              // // ),
-                              // const SizedBox(height: 16),
+                              Image.network(
+                                'https://firebasestorage.googleapis.com/v0/b/hershield-ef18c.appspot.com/o/logo%202.0.png?alt=media&token=6a15fe13-4c3a-4058-9da0-d674c6d8be18',
+                                 height: 150,
+                              ),
                               Text(
                                 "Welcome to hershield",
                                 style:
@@ -138,7 +137,7 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
                                       AutovalidateMode.onUserInteraction,
                                 ),
                               ),
-                              const SizedBox(height: 8),
+                              const SizedBox(height: 6),
                               Row(
                                 children: [
                                   Expanded(
@@ -328,6 +327,7 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
               ),
             ),
           ),
+
         ],
       ),
     );
@@ -353,3 +353,5 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
     });
   }
 }
+
+
