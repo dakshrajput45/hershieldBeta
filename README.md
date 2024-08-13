@@ -29,5 +29,3 @@ A little help notes in case there is an error
 
   ### Now it should work hopefully
 
-
-PS:- If someone tried on iOS, if there is a error. Send that error in group.
