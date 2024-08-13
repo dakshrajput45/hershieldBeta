@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class DsdToastMessages {
+class HSToastMessages {
   static success(BuildContext context, {required String text}) {
     var snackBar = SnackBar(
       duration: const Duration(seconds: 3),
