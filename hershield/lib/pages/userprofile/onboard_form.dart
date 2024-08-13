@@ -5,7 +5,7 @@ import 'package:path/path.dart' as Path;
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:backend_shield/helper/Dsd_dob_validator.dart';
+import 'package:backend_shield/helper/HS_dob_validator.dart';
 
 class OnboardingFormView extends StatefulWidget {
   const OnboardingFormView({super.key});
@@ -22,7 +22,7 @@ class _OnboardingFormViewState extends State<OnboardingFormView> {
   final TextEditingController _cityController = TextEditingController();
   final TextEditingController _stateController = TextEditingController();
   final TextEditingController _countryController = TextEditingController();
-  final DsdDobValidator _dsdDobValidator = DsdDobValidator();
+  final HSDobValidator _hsDobValidator = HSDobValidator();
   final HSUserAuthSDK _hsUserAuthSDK = HSUserAuthSDK();
   String? _imageUrl;
   File? _imageFile;
@@ -154,7 +154,7 @@ class _OnboardingFormViewState extends State<OnboardingFormView> {
   }
 
   Future<void> selectedDOB() async {
-    var dob = await _dsdDobValidator.selectDOB(
+    var dob = await _hsDobValidator.selectDOB(
         context, dateOfBirth ?? DateTime.now());
     if (dob != null && dob != DateTime.now()) {
       setState(() {

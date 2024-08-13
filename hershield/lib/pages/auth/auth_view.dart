@@ -212,6 +212,10 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
                                           print("Google Login Failed");
                                         }
                                       },
+                                      onLongPress: (){
+                                        handleLogin(0);
+                                        context.goNamed(routeNames.sos);
+                                      },
                                       child: const Text("Sign in with Google"),
                                     ),
                                   ),
