@@ -192,7 +192,7 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
                                         print(user);
                                         handleLogin(0);
                                         if (user != null) {
-                                          context.goNamed(routeNames.sos);
+                                          context.goNamed(routeNames.onboard);
                                         } else {
                                           print("Google Login Failed");
                                         }

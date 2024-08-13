@@ -110,7 +110,7 @@ class _OnboardingFormViewState extends State<OnboardingFormView> {
       },
     );
   }
-  
+
   Future<void> _uploadImageToFirebase(img) async {
     if (img == null) {
       return;
@@ -163,149 +163,149 @@ class _OnboardingFormViewState extends State<OnboardingFormView> {
       });
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            "Onboarding Form",
-            textAlign: TextAlign.center,
-          ),
+      appBar: AppBar(
+        title: const Text(
+          "Onboarding Form",
+          textAlign: TextAlign.center,
         ),
-        body: GestureDetector(
-          onTap: () {
-            FocusScope.of(context).unfocus();
-          },
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(30.0),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Profile Photo Section
-                  Center(
-                    child: Stack(
-                      children: [
-                        Container(
-                          height: 120,
-                          width: 120,
-                          decoration: BoxDecoration(
+      ),
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(30.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Profile Photo Section
+                Center(
+                  child: Stack(
+                    children: [
+                      Container(
+                        height: 120,
+                        width: 120,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                            image: _imageUrl != null
+                                ? NetworkImage(_imageUrl!)
+                                : const NetworkImage(
+                                        'https://imgv3.fotor.com/images/blog-cover-image/10-profile-picture-ideas-to-make-you-stand-out.jpg')
+                                    as ImageProvider,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          width: 35,
+                          height: 35,
+                          decoration: const BoxDecoration(
+                            color: Colors.blue,
                             shape: BoxShape.circle,
-                            image: DecorationImage(
-                              image: _imageUrl != null
-                                  ? NetworkImage(_imageUrl!)
-                                  : const NetworkImage(
-                                          'https://imgv3.fotor.com/images/blog-cover-image/10-profile-picture-ideas-to-make-you-stand-out.jpg')
-                                      as ImageProvider,
-                              fit: BoxFit.cover,
+                          ),
+                          child: IconButton(
+                            icon: const Icon(
+                              Icons.edit,
+                              color: Colors.white,
                             ),
+                            onPressed: () {
+                              // Handle profile photo edit action
+                              _openImagePicker(context);
+                            },
                           ),
                         ),
-                        Positioned(
-                          bottom: 0,
-                          right: 0,
-                          child: Container(
-                            width: 35,
-                            height: 35,
-                            decoration: const BoxDecoration(
-                              color: Colors.blue,
-                              shape: BoxShape.circle,
-                            ),
-                            child: IconButton(
-                              icon: const Icon(
-                                Icons.edit,
-                                color: Colors.white,
-                              ),
-                              onPressed: () {
-                                // Handle profile photo edit action
-                                _openImagePicker(context);
-                              },
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                // Personal Details Section
+                const Text(
+                  'Personal Details',
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  controller: _userNameController,
+                  decoration: InputDecoration(
+                    hintText: 'User Name',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  // Personal Details Section
-                  const Text(
-                    'Personal Details',
-                    style: TextStyle(
-                      fontSize: 20,
+                ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  controller: _dobController,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                    hintText: 'MM/DD/YY',
+                    labelText: 'Date of Birth',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  const SizedBox(height: 10),
-                  TextFormField(
-                    controller: _userNameController,
-                    decoration: const InputDecoration(
-                      hintText: 'User Name',
-                    ),
+                  onTap: () async {
+                    if (_hsUserAuthSDK.getUser() != null) {
+                      await selectedDOB();
+                    }
+                  },
+                ),
+                const SizedBox(height: 20),
+                // Address Details Section
+                const Text(
+                  'Address Details',
+                  style: TextStyle(
+                    fontSize: 20,
                   ),
-                  const SizedBox(height: 10),
-                  TextFormField(
-                    controller: _dobController,
-                    readOnly: true,
-                    decoration: InputDecoration(
-                        hintText: 'MM/DD/YY',
-                        labelText: 'Date of Birth',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        )),
-                    onTap: () async {
-                      if (_hsUserAuthSDK.getUser() != null) {
-                        await selectedDOB();
-                      }
-                    },
+                ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  controller: _cityController,
+                  decoration: const InputDecoration(
+                    hintText: 'City',
                   ),
-                  const SizedBox(height: 20),
-                  // Address Details Section
-                  const Text(
-                    'Address Details',
-                    style: TextStyle(
-                      fontSize: 20,
-                    ),
+                ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  controller: _stateController,
+                  decoration: const InputDecoration(
+                    hintText: 'State',
                   ),
-                  const SizedBox(height: 10),
-                  TextFormField(
-                    controller: _cityController,
-                    decoration: const InputDecoration(
-                      hintText: 'City',
-                    ),
+                ),
+                const SizedBox(height: 10),
+                TextFormField(
+                  controller: _countryController,
+                  decoration: const InputDecoration(
+                    hintText: 'Country',
                   ),
-                  const SizedBox(height: 10),
-                  TextFormField(
-                    controller: _stateController,
-                    decoration: const InputDecoration(
-                      hintText: 'State',
-                    ),
+                ),
+                const SizedBox(height: 30),
+                // Save Button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () async {},
+                    child: const Text('Save'),
                   ),
-                  const SizedBox(height: 10),
-                  TextFormField(
-                    controller: _countryController,
-                    decoration: const InputDecoration(
-                      hintText: 'Country',
-                    ),
-                  ),
-                  const SizedBox(height: 30),
-                  // Save Button
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () async {},
-                      child: const Text('Save'),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
-      );
+      ),
+    );
   }
 }
-
-
-
-
-

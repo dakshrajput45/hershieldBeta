@@ -4,6 +4,7 @@ import 'package:hershield/pages/auth/auth_view.dart';
 import 'package:hershield/pages/communityfeed/communityfeed_view.dart';
 import 'package:hershield/pages/home_view.dart';
 import 'package:hershield/pages/sosview/sos_view.dart';
+import 'package:hershield/pages/userprofile/onboard_form.dart';
 import 'package:hershield/pages/userprofile/userprofile_view.dart';
 
 // Simulate login status
@@ -24,6 +25,11 @@ class RouterConfig {
         path: '/auth',
         name: routeNames.auth,
         builder: (context, state) => const AuthView(),
+      ),
+      GoRoute(
+        path: '/onboard',
+        name: routeNames.onboard,
+        builder: (context, state) => const OnboardingFormView(),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
@@ -79,4 +85,5 @@ class RouteNames {
   final String communityfeed = 'communityfeed';
   final String userprofile = 'userprofile';
   final String auth = 'auth';
+  final String onboard = 'onbaord';
 }
