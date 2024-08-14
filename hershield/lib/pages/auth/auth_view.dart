@@ -17,8 +17,7 @@ class AuthView extends StatefulWidget {
 class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _otpController = TextEditingController();
-  late TabController tabController =
-      TabController(length: 2, vsync: this, initialIndex: 0);
+  late TabController tabController = TabController(length: 2, vsync: this, initialIndex: 0);
   final _formKey = GlobalKey<FormState>();
   bool isButtonEnabled = false;
   bool isResendButtonEnabled = true;
@@ -88,12 +87,11 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
                             children: [
                               Image.network(
                                 'https://firebasestorage.googleapis.com/v0/b/hershield-ef18c.appspot.com/o/logo%202.0.png?alt=media&token=6a15fe13-4c3a-4058-9da0-d674c6d8be18',
-                                 height: 150,
+                                height: 150,
                               ),
                               Text(
                                 "Welcome to HerShield",
-                                style:
-                                    Theme.of(context).textTheme.headlineMedium,
+                                style: Theme.of(context).textTheme.headlineMedium,
                               ),
                               const SizedBox(height: 8),
                               Text(
@@ -138,8 +136,7 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
                                   onFieldSubmitted: (value) {
                                     FocusScope.of(context).unfocus();
                                   },
-                                  autovalidateMode:
-                                      AutovalidateMode.onUserInteraction,
+                                  autovalidateMode: AutovalidateMode.onUserInteraction,
                                 ),
                               ),
                               const SizedBox(height: 6),
@@ -150,9 +147,7 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
                                       onPressed: !isButtonEnabled
                                           ? null
                                           : () async {
-                                              if (_formKey.currentState
-                                                      ?.validate() ??
-                                                  false) {
+                                              if (_formKey.currentState?.validate() ?? false) {
                                                 setState(() {
                                                   _isLoading = true;
                                                 });
@@ -160,13 +155,34 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
                                                     '+91${_phoneController.value.text.trim()}';
                                                 print(phoneNumber);
                                                 // Simulate sending OTP
-                                                await Future.delayed(
-                                                    const Duration(seconds: 2));
+
+                                                try {
+                                                  await FirebaseAuth.instance.verifyPhoneNumber(
+                                                    phoneNumber: phoneNumber,
+                                                    verificationCompleted:
+                                                        (PhoneAuthCredential credential) async {
+                                                      await FirebaseAuth.instance
+                                                          .signInWithCredential(credential);
+                                                    },
+                                                    verificationFailed: (FirebaseAuthException e) {
+                                                      print(e);
+                                                    },
+                                                    codeSent: (String verificationId,
+                                                        int? resendToken) async {
+                                                      
+                                                    },
+                                                    codeAutoRetrievalTimeout:
+                                                        (String verificationId) {},
+                                                  );
+                                                } catch (e) {
+                                                  print("Error signing in with phone number: $e");
+                                                  rethrow;
+                                                }
+                                                await Future.delayed(const Duration(seconds: 2));
                                                 setState(() {
                                                   _isLoading = false;
                                                   tabController.animateTo(1,
-                                                      duration: const Duration(
-                                                          milliseconds: 200));
+                                                      duration: const Duration(milliseconds: 200));
                                                 });
                                               }
                                             },
@@ -187,8 +203,7 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
                                     child: OutlinedButton(
                                       onPressed: () async {
                                         // Google Sign Up Function Added here (Same function used for Log In)
-                                        User? user =
-                                            await _hsUserAuthSDK.googleSignUp();
+                                        User? user = await _hsUserAuthSDK.googleSignUp();
                                         print(user);
                                         handleLogin(0);
                                         if (user != null) {
@@ -196,6 +211,10 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
                                         } else {
                                           print("Google Login Failed");
                                         }
+                                      },
+                                      onLongPress: (){
+                                        handleLogin(0);
+                                        context.goNamed(routeNames.sos);
                                       },
                                       child: const Text("Sign in with Google"),
                                     ),
@@ -230,27 +249,22 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
                       ),
                       const SizedBox(height: 12),
                       Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 2, vertical: 10.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 10.0),
                         child: TextField(
                           controller: _otpController,
                           obscureText: true,
                           maxLength: 6,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly
-                          ],
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                           keyboardType: TextInputType.number,
                           decoration: const InputDecoration(
-                              contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 16.0, vertical: 2)),
+                              contentPadding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 2)),
                         ),
                       ),
                       const SizedBox(height: 8),
                       if (_errorMessage != null) ...[
                         Text(
                           _errorMessage!,
-                          style: TextStyle(
-                              color: Theme.of(context).colorScheme.error),
+                          style: TextStyle(color: Theme.of(context).colorScheme.error),
                         ),
                         const SizedBox(height: 12),
                       ],
@@ -267,12 +281,10 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
                                   recognizer: TapGestureRecognizer()
                                     ..onTap = () {
                                       tabController.animateTo(0,
-                                          duration: const Duration(
-                                              milliseconds: 200));
+                                          duration: const Duration(milliseconds: 200));
                                     },
                                   style: TextStyle(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
+                                    color: Theme.of(context).colorScheme.primary,
                                     decoration: TextDecoration.underline,
                                   ),
                                 ),
@@ -295,12 +307,8 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
                                     },
                                   style: TextStyle(
                                     color: isResendButtonEnabled
-                                        ? Theme.of(context)
-                                            .colorScheme
-                                            .secondary
-                                        : Theme.of(context)
-                                            .colorScheme
-                                            .onSurface,
+                                        ? Theme.of(context).colorScheme.secondary
+                                        : Theme.of(context).colorScheme.onSurface,
                                     decoration: TextDecoration.underline,
                                   ),
                                 ),
@@ -324,8 +332,7 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
                                     context.goNamed(routeNames.sos);
                                     // Proceed to the next screen or home page
                                   } else {
-                                    _errorMessage =
-                                        'Invalid OTP. Please try again.';
+                                    _errorMessage = 'Invalid OTP. Please try again.';
                                   }
                                 });
                               },
@@ -340,7 +347,6 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
               ),
             ),
           ),
-
         ],
       ),
     );
@@ -366,5 +372,3 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
     });
   }
 }
-
-

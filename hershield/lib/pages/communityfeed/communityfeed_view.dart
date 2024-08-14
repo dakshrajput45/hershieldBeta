@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hershield/loader.dart';
 
 class CommunityFeedView extends StatefulWidget {
   const CommunityFeedView({
@@ -9,11 +10,26 @@ class CommunityFeedView extends StatefulWidget {
 }
 
 class _CommunityFeedViewState extends State<CommunityFeedView> {
+    bool is_loading = true;
+    
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-        body: Center(
-      child: Text("community feed"),
-    ));
+    return Scaffold(
+      body: Stack(
+        children: [
+          Center(child: Text("community feed")),
+          is_loading ? BlurredBackgroundLoader() : SizedBox.shrink(),
+          ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  is_loading = !is_loading;
+                  print(is_loading);
+                });
+              },
+              child: Text("Change")),
+        ],
+        // child: Text("community feed"),
+      ),
+    );
   }
 }

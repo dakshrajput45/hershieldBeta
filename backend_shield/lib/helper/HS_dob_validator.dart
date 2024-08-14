@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-class DsdDobValidator {
+class HSDobValidator {
   String? dobValidator(String? value, DateTime? dateOfBirth) {
     if (value == null || value.isEmpty) {
       return 'Please select your date of birth';
