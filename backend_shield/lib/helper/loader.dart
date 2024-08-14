@@ -19,7 +19,7 @@ class BlurredBackgroundLoader extends StatelessWidget {
           child: SpinKitWaveSpinner(
             color: Colors.pink,
             size: 100,
-            curve: Curves.decelerate,
+            curve: Curves.linearToEaseOut,
           ),
         ),
       ],
