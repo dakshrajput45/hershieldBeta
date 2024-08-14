@@ -15,7 +15,7 @@ class BlurredBackgroundLoader extends StatelessWidget {
           ),
         ),
         // Centered Loader
-        Center(
+        const Center(
           child: SpinKitWaveSpinner(
             color: Colors.pink,
             size: 100,
