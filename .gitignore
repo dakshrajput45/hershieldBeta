@@ -12,3 +12,5 @@ hershield/macos/Flutter/GeneratedPluginRegistrant.swift
 hershield/windows/flutter/generated_plugin_registrant.cc
 hershield/windows/flutter/generated_plugin_registrant.h
 hershield/windows/flutter/generated_plugins.cmake
+hershield/pubspec.lock
+backend_shield/pubspec.lock

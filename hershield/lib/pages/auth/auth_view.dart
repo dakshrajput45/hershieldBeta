@@ -25,6 +25,7 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
   Timer? _timer;
   int _resendOtpSecondsRemaining = 60;
   bool _isLoading = false;
+  String _verificationId = "";
 
   final HSUserAuthSDK _hsUserAuthSDK = HSUserAuthSDK();
 
@@ -169,7 +170,9 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
                                                     },
                                                     codeSent: (String verificationId,
                                                         int? resendToken) async {
-                                                      
+                                                      setState(() {
+                                                        _verificationId = verificationId;
+                                                      });
                                                     },
                                                     codeAutoRetrievalTimeout:
                                                         (String verificationId) {},
@@ -212,7 +215,7 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
                                           print("Google Login Failed");
                                         }
                                       },
-                                      onLongPress: (){
+                                      onLongPress: () {
                                         handleLogin(0);
                                         context.goNamed(routeNames.sos);
                                       },
@@ -323,18 +326,31 @@ class _AuthViewState extends State<AuthView> with TickerProviderStateMixin {
                         children: [
                           Expanded(
                             child: ElevatedButton(
-                              onPressed: () {
-                                setState(() {
-                                  // Dummy validation
-                                  if (_otpController.value.text == "123456") {
+                              onPressed: () async {
+                                // Dummy validation
+                                if (_otpController.value.text == "123456" ||
+                                    _otpController.value.text == _verificationId) {
+                                  _errorMessage = null;
+                                  handleLogin(2);
+                                  context.goNamed(routeNames.sos);
+                                  // Proceed to the next screen or home page
+                                } else if (_verificationId != "") {
+                                  try {
+                                    PhoneAuthCredential credential = PhoneAuthProvider.credential(
+                                      verificationId: _verificationId,
+                                      smsCode: _otpController.value.text,
+                                    );
+                                    await FirebaseAuth.instance.signInWithCredential(credential);
                                     _errorMessage = null;
                                     handleLogin(2);
                                     context.goNamed(routeNames.sos);
-                                    // Proceed to the next screen or home page
-                                  } else {
-                                    _errorMessage = 'Invalid OTP. Please try again.';
+                                    print("User signed in successfully");
+                                  } catch (e) {
+                                    print("Failed to sign in: $e");
                                   }
-                                });
+                                } else {
+                                  _errorMessage = 'Invalid OTP. Please try again.';
+                                }
                               },
                               child: const Text("Verify OTP"),
                             ),
