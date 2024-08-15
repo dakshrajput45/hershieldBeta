@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:backend_shield/apis/auth/user_auth.dart';
+import 'package:backend_shield/helper/loader.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as Path;
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -28,105 +29,113 @@ class _OnboardingFormViewState extends State<OnboardingFormView> {
   File? _imageFile;
   DateTime? dateOfBirth;
 
-  void _openImagePicker(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      builder: (BuildContext context) {
-        return SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              ListTile(
-                leading: const Icon(Icons.photo_library),
-                title: const Text('Choose from gallery'),
-                onTap: () async {
-                  File? img = await _pickImage(ImageSource.gallery);
-                  if (img != null) {
-                    await _uploadImageToFirebase(img);
-                  }
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                leading: const Icon(Icons.link),
-                title: const Text('Upload from link'),
-                onTap: () async {
-                  Navigator.pop(context);
-                  await showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return Dialog(
-                        child: Container(
-                          padding: const EdgeInsets.all(16),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              const Text(
-                                'Upload from link',
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
+  Future<void> _openImagePicker(BuildContext context) async {
+    try {
+      setState(() {
+        isLoading = true;
+      });
+
+      File? img;
+      await showModalBottomSheet(
+        context: context,
+        builder: (BuildContext context) {
+          return SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                ListTile(
+                  leading: const Icon(Icons.photo_library),
+                  title: const Text('Choose from gallery'),
+                  onTap: () async {
+                    img = await _pickImage(ImageSource.gallery);
+                    Navigator.pop(context);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.link),
+                  title: const Text('Upload from link'),
+                  onTap: () async {
+                    Navigator.pop(context);
+                    await showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return Dialog(
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                const Text(
+                                  'Upload from link',
+                                  style: TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 16),
-                              TextField(
-                                controller: _urlController,
-                                decoration: const InputDecoration(
-                                    hintText: 'Enter image URL'),
-                              ),
-                              const SizedBox(height: 16),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: <Widget>[
-                                  TextButton(
-                                    child: const Text('Cancel'),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                  ),
-                                  TextButton(
-                                    child: const Text('Upload'),
-                                    onPressed: () {
-                                      setState(() {
-                                        _imageUrl = _urlController.text;
-                                      });
-                                      Navigator.pop(context);
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ],
+                                const SizedBox(height: 16),
+                                TextField(
+                                  controller: _urlController,
+                                  decoration: const InputDecoration(
+                                      hintText: 'Enter image URL'),
+                                ),
+                                const SizedBox(height: 16),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: <Widget>[
+                                    TextButton(
+                                      child: const Text('Cancel'),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                    TextButton(
+                                      child: const Text('Upload'),
+                                      onPressed: () {
+                                        setState(() {
+                                          _imageUrl = _urlController.text;
+                                        });
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                  );
-                },
-              ),
-            ],
-          ),
-        );
-      },
-    );
+                        );
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
+          );
+        },
+      );
+
+      // Check if an image was picked and upload it to Firebase
+      if (img != null) {
+        await _uploadImageToFirebase(img!);
+      }
+    } catch (e) {
+      print('Error: $e');
+    } finally {
+      // Reset isLoading to false once the process is complete
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
-  Future<void> _uploadImageToFirebase(img) async {
-    if (img == null) {
-      return;
-    }
+  Future<void> _uploadImageToFirebase(File img) async {
     try {
-      if (!await img!.exists()) {
-        return;
-      }
-
       final ref = firebase_storage.FirebaseStorage.instance
           .ref()
           .child('images')
-          .child('${Path.basename(_imageFile!.path)}');
+          .child('${Path.basename(img.path)}');
 
-      // Upload the file to Firebase Storage
-      final uploadTask = ref.putFile(img!);
+      final uploadTask = ref.putFile(img);
       await uploadTask;
       final downloadURL = await ref.getDownloadURL();
 
@@ -134,7 +143,7 @@ class _OnboardingFormViewState extends State<OnboardingFormView> {
         _imageUrl = downloadURL;
       });
     } catch (e) {
-      rethrow;
+      print('Failed to upload image: $e');
     }
   }
 
@@ -154,8 +163,8 @@ class _OnboardingFormViewState extends State<OnboardingFormView> {
   }
 
   Future<void> selectedDOB() async {
-    var dob = await _hsDobValidator.selectDOB(
-        context, dateOfBirth ?? DateTime.now());
+    var dob =
+        await _hsDobValidator.selectDOB(context, dateOfBirth ?? DateTime.now());
     if (dob != null && dob != DateTime.now()) {
       setState(() {
         dateOfBirth = dob;
@@ -164,6 +173,7 @@ class _OnboardingFormViewState extends State<OnboardingFormView> {
     }
   }
 
+  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -173,138 +183,147 @@ class _OnboardingFormViewState extends State<OnboardingFormView> {
           textAlign: TextAlign.center,
         ),
       ),
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(30.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Profile Photo Section
-                Center(
-                  child: Stack(
-                    children: [
-                      Container(
-                        height: 120,
-                        width: 120,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            image: _imageUrl != null
-                                ? NetworkImage(_imageUrl!)
-                                : const NetworkImage(
-                                        'https://imgv3.fotor.com/images/blog-cover-image/10-profile-picture-ideas-to-make-you-stand-out.jpg')
-                                    as ImageProvider,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        bottom: 0,
-                        right: 0,
-                        child: Container(
-                          width: 35,
-                          height: 35,
-                          decoration: const BoxDecoration(
-                            color: Colors.blue,
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(30.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Profile Photo Section
+                  Center(
+                    child: Stack(
+                      children: [
+                        Container(
+                          height: 120,
+                          width: 120,
+                          decoration: BoxDecoration(
                             shape: BoxShape.circle,
                           ),
-                          child: IconButton(
-                            icon: const Icon(
-                              Icons.edit,
-                              color: Colors.white,
+                          child: ClipOval(
+                            child: SizedBox(
+                              width: 120,
+                              height: 120,
+                              child: FadeInImage(
+                                placeholder: NetworkImage('https://imgv3.fotor.com/images/blog-cover-image/10-profile-picture-ideas-to-make-you-stand-out.jpg'), // Path to your placeholder image
+                                image: _imageUrl != null
+                                    ? NetworkImage(_imageUrl!)
+                                    : const NetworkImage('https://imgv3.fotor.com/images/blog-cover-image/10-profile-picture-ideas-to-make-you-stand-out.jpg'),
+                                fit: BoxFit.cover,
+                                imageErrorBuilder: (context, error, stackTrace) {
+                                  return const Image(
+                                    image: NetworkImage('https://imgv3.fotor.com/images/blog-cover-image/10-profile-picture-ideas-to-make-you-stand-out.jpg'), // Path to an error image if the network image fails
+                                    fit: BoxFit.cover,
+                                  );
+                                },
+                              ),
                             ),
-                            onPressed: () {
-                              // Handle profile photo edit action
-                              _openImagePicker(context);
-                            },
                           ),
                         ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: InkWell(
+                            onTap: () async {
+                              await _openImagePicker(context);
+                            },
+                            child: CircleAvatar(
+                              key: ValueKey(isLoading),
+                              backgroundColor: Colors.blue,
+                              child: isLoading
+                                  ? const CircularProgressIndicator(
+                                      color: Colors.white,
+                                    )
+                                  : const Icon(
+                                      Icons.edit,
+                                      color: Colors.white,
+                                    ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  // Personal Details Section
+                  const Text(
+                    'Personal Details',
+                    style: TextStyle(
+                      fontSize: 20,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  TextFormField(
+                    controller: _userNameController,
+                    decoration: InputDecoration(
+                      hintText: 'User Name',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
                       ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                // Personal Details Section
-                const Text(
-                  'Personal Details',
-                  style: TextStyle(
-                    fontSize: 20,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                TextFormField(
-                  controller: _userNameController,
-                  decoration: InputDecoration(
-                    hintText: 'User Name',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                TextFormField(
-                  controller: _dobController,
-                  readOnly: true,
-                  decoration: InputDecoration(
-                    hintText: 'MM/DD/YY',
-                    labelText: 'Date of Birth',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
+                  const SizedBox(height: 10),
+                  TextFormField(
+                    controller: _dobController,
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      hintText: 'MM/DD/YY',
+                      labelText: 'Date of Birth',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    onTap: () async {
+                      if (_hsUserAuthSDK.getUser() != null) {
+                        await selectedDOB();
+                      }
+                    },
+                  ),
+                  const SizedBox(height: 20),
+                  // Address Details Section
+                  const Text(
+                    'Address Details',
+                    style: TextStyle(
+                      fontSize: 20,
                     ),
                   ),
-                  onTap: () async {
-                    if (_hsUserAuthSDK.getUser() != null) {
-                      await selectedDOB();
-                    }
-                  },
-                ),
-                const SizedBox(height: 20),
-                // Address Details Section
-                const Text(
-                  'Address Details',
-                  style: TextStyle(
-                    fontSize: 20,
+                  const SizedBox(height: 10),
+                  TextFormField(
+                    controller: _cityController,
+                    decoration: const InputDecoration(
+                      hintText: 'City',
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                TextFormField(
-                  controller: _cityController,
-                  decoration: const InputDecoration(
-                    hintText: 'City',
+                  const SizedBox(height: 10),
+                  TextFormField(
+                    controller: _stateController,
+                    decoration: const InputDecoration(
+                      hintText: 'State',
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                TextFormField(
-                  controller: _stateController,
-                  decoration: const InputDecoration(
-                    hintText: 'State',
+                  const SizedBox(height: 10),
+                  TextFormField(
+                    controller: _countryController,
+                    decoration: const InputDecoration(
+                      hintText: 'Country',
+                    ),
                   ),
-                ),
-                const SizedBox(height: 10),
-                TextFormField(
-                  controller: _countryController,
-                  decoration: const InputDecoration(
-                    hintText: 'Country',
+                  const SizedBox(height: 30),
+                  // Save Button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () async {},
+                      child: const Text('Save'),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 30),
-                // Save Button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () async {},
-                    child: const Text('Save'),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }
