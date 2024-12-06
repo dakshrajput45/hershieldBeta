@@ -1,13 +1,14 @@
+import 'package:backend_shield/helper/log.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class HSUserAuthSDK {
-  User? getUser() {
-    print(FirebaseAuth.instance.currentUser);
+  static User? getUser() {
+    hsLog(FirebaseAuth.instance.currentUser);
     return FirebaseAuth.instance.currentUser;
   }
 
-  Future<User?> googleSignUp() async {
+  static Future<User?> googleSignUp() async {
     try {
       // SignIn implementation
       final GoogleSignInAccount? googleSignInAccount =
@@ -35,19 +36,19 @@ class HSUserAuthSDK {
       }
     } catch (error) {
       // Handle the error
-      print("Error signing in with Google: $error");
+      hsLog("Error signing in with Google: $error");
       rethrow;
     }
   }
 
-  Future signOut() async {
+  static Future signOut() async {
     try {
       // Sign Out out of GoogleSignIn
       await GoogleSignIn().signOut();
       // Sign Out out of Firebase Instance
       await FirebaseAuth.instance.signOut();
     } catch (e) {
-      print(e);
+      hsLog(e);
       rethrow;
     }
   }

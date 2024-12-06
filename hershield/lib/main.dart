@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:hershield/firebase_options.dart';
 import 'package:hershield/router.dart';
 import 'package:hershield/theme.dart';
+import 'package:responsive_sizer/responsive_sizer.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
@@ -17,12 +18,17 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-        title: 'HerShield',
-        debugShowCheckedModeBanner: false,
-        theme: appTheme,
-        routerConfig: routerConfig.getRouter(),
-      );
+    return SafeArea(
+      child: ResponsiveSizer(
+        builder: (context, orientation, screenType) {
+          return MaterialApp.router(
+            title: 'HerShield',
+            debugShowCheckedModeBanner: false,
+            theme: appTheme,
+            routerConfig: GNRouteConfig.router,
+          );
+        },
+      ),
+    );
   }
 }
-

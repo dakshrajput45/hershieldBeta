@@ -1,3 +1,6 @@
+import 'package:backend_shield/apis/auth/user_auth.dart';
+import 'package:backend_shield/helper/log.dart';
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hershield/pages/areaprofiling/areaprofiling_view.dart';
 import 'package:hershield/pages/auth/auth_view.dart';
@@ -13,77 +16,89 @@ void updateLoginStatus(int loggedIn) {
   isLoggedIn = loggedIn;
 }
 
-RouterConfig routerConfig = RouterConfig();
-RouteNames routeNames = RouteNames();
-
-class RouterConfig {
-  GoRouter getRouter() => _router;
-  final GoRouter _router = GoRouter(
-    // Define routes
+class GNRouteConfig {
+  static final GlobalKey<NavigatorState> _rootNavigatorKey =
+      GlobalKey<NavigatorState>();
+  static final GoRouter _router = GoRouter(
+    navigatorKey: _rootNavigatorKey,
+    initialLocation: "/",
     routes: [
-      GoRoute(
-        path: '/auth',
-        name: routeNames.auth,
-        builder: (context, state) => const AuthView(),
-      ),
-      GoRoute(
-        path: '/onboard',
-        name: routeNames.onboard,
-        builder: (context, state) => const OnboardingFormView(),
-      ),
       StatefulShellRoute.indexedStack(
-        builder: (context, state, navigationShell) {
-          return HomeView(
-            navigationShell: navigationShell,
-            title: 'hershield',
-          );
-        },
         branches: <StatefulShellBranch>[
           StatefulShellBranch(
             routes: [
               GoRoute(
                 path: '/',
-                name: routeNames.sos,
+                name: RouteNames.sos,
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: SosView()),
               ),
               GoRoute(
-                path: '/communityfeed',
-                name: routeNames.communityfeed,
-                pageBuilder: (context, state) =>
-                    const NoTransitionPage(child: CommunityFeedView()),
-              ),
-              GoRoute(
-                path: '/areaprofiling',
-                name: routeNames.areaprofiling,
-                pageBuilder: (context, state) =>
-                    const NoTransitionPage(child: AreaProfilingView()),
-              ),
-              GoRoute(
                 path: '/userprofile',
-                name: routeNames.userprofile,
+                name: RouteNames.userprofile,
                 pageBuilder: (context, state) =>
                     const NoTransitionPage(child: UserProfileView()),
               ),
             ],
           ),
         ],
+        builder: (context, state, navigationShell) {
+          int index = 0;
+          switch (state.fullPath) {
+            case '/userprofile':
+              index = 1;
+              break;
+          }
+          return HomeView(
+            navigationShell: navigationShell,
+            index: index,
+          );
+        },
       ),
+      GoRoute(
+        path: '/auth',
+        name: RouteNames.auth,
+        builder: (context, state) => const AuthView(),
+      ),
+      GoRoute(
+        path: '/onboard',
+        name: RouteNames.onboard,
+        builder: (context, state) => const OnboardingFormView(),
+      )
     ],
     redirect: (context, state) {
-      if (isLoggedIn == 1) {
-        return ("/auth");
+      if (HSUserAuthSDK.getUser() == null) {
+        var allowedLocations = ["/auth"];
+        if (allowedLocations.contains(state.matchedLocation)) {
+          return null;
+        }
+        hsLog(state.matchedLocation);
+        return "/auth";
       }
       return null;
     },
   );
+
+  // GoRoute(
+  //   path: '/communityfeed',
+  //   name: routeNames.communityfeed,
+  //   pageBuilder: (context, state) =>
+  //       const NoTransitionPage(child: CommunityFeedView()),
+  // ),
+  // GoRoute(
+  //   path: '/areaprofiling',
+  //   name: routeNames.areaprofiling,
+  //   pageBuilder: (context, state) =>
+  //       const NoTransitionPage(child: AreaProfilingView()),
+  // ),
+  static GoRouter get router => _router;
 }
 
 class RouteNames {
-  final String sos = 'sos';
-  final String areaprofiling = 'areaprofiling';
-  final String communityfeed = 'communityfeed';
-  final String userprofile = 'userprofile';
-  final String auth = 'auth';
-  final String onboard = 'onbaord';
+  static const String sos = 'sos';
+  static const String areaprofiling = 'areaprofiling';
+  static const String communityfeed = 'communityfeed';
+  static const String userprofile = 'userprofile';
+  static const String auth = 'auth';
+  static const String onboard = 'onbaord';
 }
