@@ -576,10 +576,6 @@ class TextControl {
     countryController.text = user.address?.country ?? '';
     selectedGender = user.gender ?? 'Male'; // Default to Male if not set
     imageUrl = user.profileImage;
-    phoneControllers.asMap().forEach((i, controller) => controller.text =
-        (user.emergencyContact != null && i < user.emergencyContact!.length)
-            ? user.emergencyContact![i]
-            : '');
   }
 
   /// Clears all controllers
