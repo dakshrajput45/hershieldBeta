@@ -1,6 +1,7 @@
 import 'package:backend_shield/apis/auth/user_auth.dart';
 import 'package:backend_shield/helper/loader.dart';
 import 'package:backend_shield/helper/log.dart';
+import 'package:backend_shield/services/user_permission.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hershield/pages/home_controller.dart';
@@ -24,8 +25,8 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     _getUserProfile();
+    //UserPermissionHandler.checkAndRequestPermission();
     super.initState();
-    
   }
 
   Future<void> _getUserProfile() async {
@@ -46,7 +47,7 @@ class _HomeViewState extends State<HomeView> {
           RouteNames.onboard,
           extra: true,
         );
-      } 
+      }
       setState(() {
         _isLoading = false;
       });

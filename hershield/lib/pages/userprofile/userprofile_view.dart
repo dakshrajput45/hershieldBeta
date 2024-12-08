@@ -116,6 +116,7 @@ class _UserProfileViewState extends State<UserProfileView> {
                   ElevatedButton(
                     onPressed: () {
                       // Handle button press
+                      context.pushNamed(RouteNames.emergency);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context)
@@ -140,12 +141,11 @@ class _UserProfileViewState extends State<UserProfileView> {
                   ),
                 ],
               ),
-              const SizedBox(height: 40), // Space before list items
+              const SizedBox(height: 40),
               // List of options
               Expanded(
                 child: ListView(
                   padding: EdgeInsets.zero,
-                  // Remove any extra padding
                   children: [
                     // Protector Mode ListTile
                     ListTile(
@@ -181,7 +181,7 @@ class _UserProfileViewState extends State<UserProfileView> {
                       },
                     ),
                     const Divider(thickness: 1), // Add bottom line
-                    // Logout ListTile with red background
+
                     ListTile(
                       leading: const Icon(Icons.logout, color: Colors.red),
                       title: const Text(

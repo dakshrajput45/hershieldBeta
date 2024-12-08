@@ -7,6 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hershield/pages/home_controller.dart';
+import 'package:hershield/pages/userprofile/emergency_contact.dart';
 import 'package:hershield/pages/userprofile/user_controller.dart';
 import 'package:hershield/router.dart';
 import 'package:hershield/theme.dart';
@@ -29,7 +30,7 @@ class _OnboardingFormViewState extends State<OnboardingFormView>
   final _additionalInfoFormKey = GlobalKey<FormState>();
 
   late TabController tabController =
-      TabController(length: 2, vsync: this, initialIndex: 0);
+      TabController(length: 3, vsync: this, initialIndex: 0);
   final HSDobValidator _hsDobValidator = HSDobValidator();
 
   File? _imageFile;
@@ -42,7 +43,7 @@ class _OnboardingFormViewState extends State<OnboardingFormView>
     if (HSProfileController.getProfile()?.id != null) {
       TextControl.populateControllers(HSProfileController.getProfile()!);
     }
-    tabController = TabController(length: 2, vsync: this); // 2 tabs
+    tabController = TabController(length: 3, vsync: this); // 2 tabs
   }
 
   var defaultImage =
@@ -54,7 +55,12 @@ class _OnboardingFormViewState extends State<OnboardingFormView>
       appBar: AppBar(
         title: const Text(
           "Onboarding Form",
+          style: TextStyle(
+            color: Colors.white,
+          ),
         ),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        elevation: 2,
       ),
       body: TabBarView(
         controller: tabController,
@@ -177,6 +183,11 @@ class _OnboardingFormViewState extends State<OnboardingFormView>
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Please enter your Aadhaar number';
+                              } else if (TextControl
+                                      .aadharController.text.length !=
+                                  12) {
+                                hsLog(TextControl.aadharController.text.length);
+                                return 'Enter Valid Aadhaar';
                               }
                               return null;
                             },
@@ -376,7 +387,9 @@ class _OnboardingFormViewState extends State<OnboardingFormView>
               ),
             ),
           ),
-          
+          const Tab(
+            child: EmergencyContactForm(),
+          ),
         ],
       ),
     );
@@ -517,8 +530,8 @@ class _OnboardingFormViewState extends State<OnboardingFormView>
   }
 
   Future<void> selectedDOB() async {
-    var dob =
-        await _hsDobValidator.selectDOB(context, TextControl.dateOfBirth ?? DateTime.now());
+    var dob = await _hsDobValidator.selectDOB(
+        context, TextControl.dateOfBirth ?? DateTime.now());
     if (dob != null && dob != DateTime.now()) {
       setState(() {
         TextControl.dateOfBirth = dob;
@@ -541,8 +554,10 @@ class TextControl {
   static final TextEditingController stateController = TextEditingController();
   static final TextEditingController countryController =
       TextEditingController();
-  static final TextEditingController phoneController = TextEditingController();
+  static final TextEditingController mobileController = TextEditingController();
   static final TextEditingController otpController = TextEditingController();
+  static final phoneControllers =
+      List.generate(5, (_) => TextEditingController());
   static String selectedGender = "Male";
   static String? imageUrl;
   static DateTime? dateOfBirth;
@@ -551,7 +566,7 @@ class TextControl {
   static void populateControllers(HSUser user) {
     firstNameController.text = user.firstName ?? '';
     lastNameController.text = user.lastName ?? '';
-    phoneController.text = user.mobileNo ?? '';
+    mobileController.text = user.mobileNo ?? '';
     aadharController.text = user.aadharCard ?? '';
     dobController.text = user.dateOfBirth != null
         ? DateFormat("MM/dd/yyyy").format(user.dateOfBirth!)
@@ -560,7 +575,11 @@ class TextControl {
     stateController.text = user.address?.state ?? '';
     countryController.text = user.address?.country ?? '';
     selectedGender = user.gender ?? 'Male'; // Default to Male if not set
-    imageUrl = user.profileImage; // Save the URL if needed for an image picker
+    imageUrl = user.profileImage;
+    phoneControllers.asMap().forEach((i, controller) => controller.text =
+        (user.emergencyContact != null && i < user.emergencyContact!.length)
+            ? user.emergencyContact![i]
+            : '');
   }
 
   /// Clears all controllers
@@ -573,7 +592,10 @@ class TextControl {
     cityController.dispose();
     stateController.dispose();
     countryController.dispose();
-    phoneController.dispose();
+    mobileController.dispose();
+    for (var controller in TextControl.phoneControllers) {
+      controller.dispose();
+    }
     otpController.dispose();
   }
 }
@@ -644,7 +666,7 @@ class _PhoneVerificationViewState extends State<PhoneVerificationView> {
             Expanded(
               flex: 2,
               child: TextFormField(
-                controller: TextControl.phoneController,
+                controller: TextControl.mobileController,
                 decoration: InputDecoration(
                   labelText: 'Phone Number',
                   hintText: 'Enter phone number',
@@ -658,7 +680,7 @@ class _PhoneVerificationViewState extends State<PhoneVerificationView> {
                       color: otpVerified ? Colors.green : null,
                     ),
                     onPressed: () {
-                      if (TextControl.phoneController.text.length != 10) {
+                      if (TextControl.mobileController.text.length != 10) {
                         // Update the error state if the phone number is invalid
                         setState(() {
                           _phoneError = 'Enter Valid No.';
@@ -731,15 +753,21 @@ class _TabNavigationButtonsState extends State<TabNavigationButtons> {
             : const SizedBox.shrink(),
         const SizedBox(width: 20), // Add space between buttons
         // Next Button
-        widget.tabController.index < 1
+        widget.tabController.index < 2
             ? TextButton(
                 onPressed: () {
-                  if (widget.tabController.index < 1 &&
+                  if (widget.tabController.index == 0 &&
                       widget.personalDetailsFormKey!.currentState!.validate()) {
                     widget.tabController.animateTo(
                       widget.tabController.index + 1,
                       duration: const Duration(milliseconds: 200),
                     );
+                  } else if (widget.tabController.index == 1) {
+                    widget.tabController.animateTo(
+                      widget.tabController.index + 1,
+                      duration: const Duration(milliseconds: 200),
+                    );
+                    saveUserDetails();
                   }
                 },
                 child: const Text(
@@ -747,21 +775,7 @@ class _TabNavigationButtonsState extends State<TabNavigationButtons> {
                   style: TextStyle(fontSize: 16),
                 ),
               )
-            : widget.tabController.index == 1
-                ? TextButton(
-                    onPressed: () async {
-                      if (widget.additionalInfoFormKey!.currentState!
-                          .validate()) {
-                        hsLog("Click");
-                        await saveUserDetails();
-                      }
-                    },
-                    child: const Text(
-                      "Save",
-                      style: TextStyle(fontSize: 16),
-                    ),
-                  )
-                : const SizedBox.shrink(),
+            : const SizedBox.shrink(),
       ],
     );
   }
@@ -779,15 +793,12 @@ class _TabNavigationButtonsState extends State<TabNavigationButtons> {
       email: HSUserAuthSDK.getUser()!.email,
       dateOfBirth: TextControl.dateOfBirth,
       gender: TextControl.selectedGender,
-      mobileNo: TextControl.phoneController.text,
+      mobileNo: TextControl.mobileController.text,
       profileImage: TextControl.imageUrl,
     );
     hsLog(user);
     await HSUserController.updateUser(
             user: user, userId: HSUserAuthSDK.getUser()!.uid)
-        .then((v) => {
-              hsLog("User Updated Succesfully"),
-              context.goNamed(RouteNames.sos)
-            });
+        .then((v) => {hsLog("User Updated Succesfully")});
   }
 }

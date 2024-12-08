@@ -32,54 +32,49 @@ class HSUser {
   });
 
   factory HSUser.fromJson({required Map<String, dynamic> json}) {
-    String? mobileNo = json['mobileNo'];
-    if (mobileNo != null && mobileNo.length != 10) {
-      throw const FormatException('Mobile number must be 10 digits.');
-    }
 
-    String? aadharCard = json['aadharCard'];
-    if (aadharCard != null && aadharCard.length != 12) {
-      throw const FormatException('Aadhar card must be 12 digits.');
-    }
+  return HSUser(
+    id: json['id'],
+    email: json['email'],
+    firstName: json['firstName'],
+    lastName: json['lastName'],
+    address: json['address'] != null
+        ? HSUserAddress.fromJson(json: json['address'])
+        : null,
+    dateOfBirth: (json['dateOfBirth'] != null)
+        ? (json['dateOfBirth'] as Timestamp).toDate()
+        : null,
+    profileImage: json['profileImage'],
+    fcmToken: json['fcmToken'],
+    mobileNo: json['mobileNo'],
+    aadharCard: json['aadharCard'],
+    gender: json['gender'],
+    userLocation: json['userLocation'] != null
+        ? HSUserLocation.fromJson(json['userLocation'])
+        : null,
+    emergencyContact: json['emergencycontact'] != null &&
+            json['emergencycontact'] is List
+        ? List<String>.from(json['emergencycontact'])
+        : null,
+  );
+}
 
-    return HSUser(
-      id: json['id'],
-      email: json['email'],
-      firstName: json['firstName'],
-      lastName: json['lastName'],
-      address: json['address'] != null
-          ? HSUserAddress.fromJson(json: json['address'])
-          : null,
-      dateOfBirth: (json['dateOfBirth'] != null)
-          ? (json['dateOfBirth'] as Timestamp).toDate()
-          : null,
-      profileImage: json['profileImage'],
-      fcmToken: json['fcmToken'],
-      mobileNo: mobileNo,
-      aadharCard: aadharCard,
-      gender: json['gender'],
-      userLocation: json['userLocation'] != null
-          ? HSUserLocation.fromJson(json['userLocation'])
-          : null,
-      emergencyContact: json['emergencycontact'],
-    );
-  }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'email': email,
-      'firstName': firstName,
-      'lastName': lastName,
-      'address': address?.toJson(),
+      if (id != null) 'id': id,
+      if (email != null) 'email': email,
+      if (firstName != null) 'firstName': firstName,
+      if (lastName != null) 'lastName': lastName,
+      if (address != null) 'address': address?.toJson(),
       if (dateOfBirth != null) 'dateOfBirth': Timestamp.fromDate(dateOfBirth!),
-      'profileImage': profileImage,
-      'fcmToken': fcmToken,
-      'mobileNo': mobileNo,
-      'aadharCard': aadharCard,
-      'gender': gender,
-      'userLocation': userLocation,
-      'emergencycontact' : emergencyContact
+      if (profileImage != null) 'profileImage': profileImage,
+      if (fcmToken != null) 'fcmToken': fcmToken,
+      if (mobileNo != null) 'mobileNo': mobileNo,
+      if (aadharCard != null) 'aadharCard': aadharCard,
+      if (gender != null) 'gender': gender,
+      if (userLocation != null) 'userLocation': userLocation,
+      if (emergencyContact != null) 'emergencycontact': emergencyContact,
     };
   }
 }
@@ -134,9 +129,9 @@ class HSUserLocation {
 
   Map<String, dynamic> toJson() {
     return {
-      'lat': lat,
-      'long': long,
-      'geoHash': geoHash,
+      if (lat != null) 'lat': lat,
+      if (long != null) 'long': long,
+      if (geoHash != null) 'geoHash': geoHash,
     };
   }
 }

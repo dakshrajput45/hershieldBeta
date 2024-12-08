@@ -4,13 +4,12 @@ Color primaryTextColor = Colors.black; // Global black text color
 
 final ThemeData appTheme = ThemeData(
   colorScheme: const ColorScheme.light(
-    primary: Color(0xFF6C4AB6)
-    , // Soft Pink (SOS screen background)
+    primary: Color(0xFF6C4AB6), 
     onPrimary: Colors.black, // Text/Icon color on primary backgrounds
     onSecondary: Colors.black, // Text/Icon color on secondary backgrounds
     onBackground: Colors.black, // Text/Icon color on general backgrounds
     onSurface: Colors.black, // Text/Icon color on surface backgrounds
-    onTertiary: Color.fromARGB(255, 250, 239, 243), // Violet Blue (App Bar and Bottom Bar)
+    onTertiary: Color.fromARGB(255, 255, 255, 255), 
   ),
   textTheme: const TextTheme(
     bodyLarge: TextStyle(color: Colors.black),

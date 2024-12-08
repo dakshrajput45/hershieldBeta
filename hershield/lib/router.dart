@@ -2,11 +2,10 @@ import 'package:backend_shield/apis/auth/user_auth.dart';
 import 'package:backend_shield/helper/log.dart';
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hershield/pages/areaprofiling/areaprofiling_view.dart';
 import 'package:hershield/pages/auth/auth_view.dart';
-import 'package:hershield/pages/communityfeed/communityfeed_view.dart';
 import 'package:hershield/pages/home_view.dart';
 import 'package:hershield/pages/sosview/sos_view.dart';
+import 'package:hershield/pages/userprofile/emergency_contact.dart';
 import 'package:hershield/pages/userprofile/onboard_form.dart';
 import 'package:hershield/pages/userprofile/userprofile_view.dart';
 
@@ -64,6 +63,11 @@ class GNRouteConfig {
         path: '/onboard',
         name: RouteNames.onboard,
         builder: (context, state) => const OnboardingFormView(),
+      ),
+      GoRoute(
+        path: '/emergency',
+        name: RouteNames.emergency,
+        builder: (context, state) => const EmergencyContactForm(),
       )
     ],
     redirect: (context, state) {
@@ -101,4 +105,5 @@ class RouteNames {
   static const String userprofile = 'userprofile';
   static const String auth = 'auth';
   static const String onboard = 'onbaord';
+  static const String emergency = 'emergency';
 }
