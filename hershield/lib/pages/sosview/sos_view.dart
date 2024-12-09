@@ -1,20 +1,21 @@
-import 'package:backend_shield/helper/loader.dart';
-import 'package:backend_shield/helper/log.dart';
 import 'package:flutter/material.dart';
+import 'package:hershield/helper/loader.dart';
+import 'package:hershield/helper/log.dart';
+import 'package:hershield/services/location.dart';
+import 'package:location/location.dart';
 
 class SosView extends StatefulWidget {
-  const SosView({
-    super.key,
-  });
+  const SosView({super.key});
   @override
   State<SosView> createState() => _SosViewState();
 }
 
 class _SosViewState extends State<SosView> {
-  bool is_loading = false;
+  bool isLoading = false;
+  
   @override
   Widget build(BuildContext context) {
-    return is_loading
+    return isLoading
         ? const BlurredBackgroundLoader()
         : Scaffold(
             backgroundColor: Theme.of(context)
@@ -51,8 +52,10 @@ class _SosViewState extends State<SosView> {
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                         shape: const CircleBorder(), elevation: 10),
-                    onPressed: () {
+                    onPressed: () async {
                       hsLog('SOS Button Pressed');
+                      LocationData? locData = await getForegroundLocation();
+                      hsLog("location data:- ${locData?.latitude}");
                     },
                     child: ClipOval(
                       child: Image.asset(

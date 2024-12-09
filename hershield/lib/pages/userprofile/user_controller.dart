@@ -1,6 +1,7 @@
-import 'package:backend_shield/apis/user_profile_api.dart';
-import 'package:backend_shield/helper/log.dart';
-import 'package:backend_shield/models/user_model.dart';
+
+import 'package:hershield/apis/user_profile_api.dart';
+import 'package:hershield/helper/log.dart';
+import 'package:hershield/models/user_model.dart';
 
 class HSUserController {
   static Future<void> updateUser(

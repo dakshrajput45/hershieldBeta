@@ -1,6 +1,7 @@
-import 'package:backend_shield/apis/user_profile_api.dart';
-import 'package:backend_shield/models/user_model.dart';
+
 import 'package:flutter/material.dart';
+import 'package:hershield/apis/user_profile_api.dart';
+import 'package:hershield/models/user_model.dart';
 
 class HSProfileController extends ChangeNotifier {
   static HSUser? _profile;

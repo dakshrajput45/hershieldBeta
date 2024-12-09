@@ -1,11 +1,14 @@
-import 'package:backend_shield/apis/auth/user_auth.dart';
-import 'package:backend_shield/helper/loader.dart';
-import 'package:backend_shield/helper/log.dart';
-import 'package:backend_shield/services/user_permission.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hershield/apis/auth/user_auth.dart';
+import 'package:hershield/helper/loader.dart';
+import 'package:hershield/helper/log.dart';
 import 'package:hershield/pages/home_controller.dart';
 import 'package:hershield/router.dart';
+import 'package:hershield/services/location.dart';
+import 'package:hershield/services/user_permission.dart';
+import 'package:hershield/widget/location_permission_view.dart';
+import 'package:workmanager/workmanager.dart';
 
 class HomeView extends StatefulWidget {
   final StatefulNavigationShell navigationShell;
@@ -24,9 +27,36 @@ class _HomeViewState extends State<HomeView> {
 
   @override
   void initState() {
-    _getUserProfile();
-    //UserPermissionHandler.checkAndRequestPermission();
+    serviceShield();
     super.initState();
+  }
+
+  Future<void> serviceShield() async {
+    await _getUserProfile();
+    await askLocation();
+    registerBackgroundTask();
+    getForegroundLocation();
+  }
+
+  Future<void> askLocation() async {
+    try {
+      await isLocationAlwaysGranted()
+          ? hsLog("location permission is granted")
+          : showLocationPermissionDialog(context);
+    } catch (e) {
+      hsLog("Error Asking location: $e");
+    }
+  }
+
+  void registerBackgroundTask() {
+    hsLog('request backgorund task working!!');
+    Workmanager().registerPeriodicTask(
+      "fetchLocationTask",
+      "fetchLocation",
+      frequency: const Duration(minutes: 15), // Every 2 hours
+      initialDelay: const Duration(seconds: 10),
+    );
+    hsLog("Task regsitered");
   }
 
   Future<void> _getUserProfile() async {

@@ -1,13 +1,12 @@
 import 'dart:async';
-import 'package:backend_shield/helper/log.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hershield/Router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:backend_shield/apis/auth/user_auth.dart';
-import 'package:hershield/pages/userprofile/user_controller.dart';
+import 'package:hershield/apis/auth/user_auth.dart';
+import 'package:hershield/helper/log.dart';
 
 class AuthView extends StatefulWidget {
   const AuthView({super.key});

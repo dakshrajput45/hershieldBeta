@@ -14,19 +14,23 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  backend_shield:
-    path: "../backend_shield"
   cupertino_icons: ^1.0.6
-  firebase_core: ^3.3.0
-  firebase_auth: ^5.1.4
+  firebase_core: 
+  firebase_auth: 
   responsive_sizer: ^3.3.1
   go_router: ^14.2.3
   image_picker: ^1.1.2
-  firebase_storage: ^12.1.1
+  firebase_storage: 
   path: ^1.9.0
   intl: ^0.19.0
   flutter_spinkit: ^5.2.1
   cached_network_image: ^3.3.1
+  location:
+  workmanager: 
+  permission_handler:
+  google_sign_in: ^6.2.1
+  cloud_firestore:
+  background_locator_2:
 
 dev_dependencies:
   flutter_test:

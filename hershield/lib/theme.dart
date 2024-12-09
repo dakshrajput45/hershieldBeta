@@ -7,7 +7,6 @@ final ThemeData appTheme = ThemeData(
     primary: Color(0xFF6C4AB6), 
     onPrimary: Colors.black, // Text/Icon color on primary backgrounds
     onSecondary: Colors.black, // Text/Icon color on secondary backgrounds
-    onBackground: Colors.black, // Text/Icon color on general backgrounds
     onSurface: Colors.black, // Text/Icon color on surface backgrounds
     onTertiary: Color.fromARGB(255, 255, 255, 255), 
   ),
