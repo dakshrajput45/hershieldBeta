@@ -13,4 +13,5 @@ hershield/windows/flutter/generated_plugin_registrant.cc
 hershield/windows/flutter/generated_plugin_registrant.h
 hershield/windows/flutter/generated_plugins.cmake
 hershield/pubspec.lock
-backend_shield/pubspec.lock
+backend_shield/node_modules
+backend_shield/.env

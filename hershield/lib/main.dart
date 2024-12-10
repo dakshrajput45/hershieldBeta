@@ -58,8 +58,7 @@ void locationCallback(LocationDto locationDto) {
   hsLog("");
   hsLog("");
   hsLog("");
-  hsLog(
-      "Background Location Updated: Latitude: ${locationDto.latitude}, Longitude: ${locationDto.longitude}");
+  hsLog("Background Location Updated: Latitude: ${locationDto.latitude}, Longitude: ${locationDto.longitude}");
   hsLog("");
   hsLog("");
   hsLog("");

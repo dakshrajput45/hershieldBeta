@@ -2,15 +2,6 @@ import '../helper/log.dart';
 import 'package:location/location.dart';
 
 
-
-/// This function is used to fetch the user's location when the app is running
-/// **in the foreground**. It should be triggered directly from the app UI, such as
-/// inside a screen's `initState` method or in response to a button press.
-///
-/// Why separate from `getBackgroundLocation()`?
-/// - Foreground location access usually updates the UI directly.
-/// - It doesn't require background task management and works within the app's
-///   current lifecycle context.
 Future<LocationData?> getForegroundLocation() async {
   Location location = Location();
 
