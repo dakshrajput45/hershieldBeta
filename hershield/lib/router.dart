@@ -10,11 +10,7 @@ import 'package:hershield/pages/userprofile/emergency_contact.dart';
 import 'package:hershield/pages/userprofile/onboard_form.dart';
 import 'package:hershield/pages/userprofile/userprofile_view.dart';
 
-// Simulate login status
-int isLoggedIn = 1;
-void updateLoginStatus(int loggedIn) {
-  isLoggedIn = loggedIn;
-}
+
 
 class GNRouteConfig {
   static final GlobalKey<NavigatorState> _rootNavigatorKey =

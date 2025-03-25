@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hershield/apis/auth/user_auth.dart';
+import 'package:hershield/apis/location_api.dart';
 import 'package:hershield/helper/loader.dart';
-import 'package:hershield/helper/log.dart';
-import 'package:hershield/services/location.dart';
-import 'package:location/location.dart';
+import 'package:hershield/router.dart';
 
 class SosView extends StatefulWidget {
   const SosView({super.key});
@@ -12,7 +13,8 @@ class SosView extends StatefulWidget {
 
 class _SosViewState extends State<SosView> {
   bool isLoading = false;
-  
+  LocationApi locationApi = LocationApi();
+
   @override
   Widget build(BuildContext context) {
     return isLoading
@@ -53,9 +55,13 @@ class _SosViewState extends State<SosView> {
                     style: ElevatedButton.styleFrom(
                         shape: const CircleBorder(), elevation: 10),
                     onPressed: () async {
-                      hsLog('SOS Button Pressed');
-                      LocationData? locData = await getForegroundLocation();
-                      hsLog("location data:- ${locData?.latitude}");
+                      await locationApi.updateUserLocation(
+                          lat: 28.682331.toString(),
+                          long: 77.4997446.toString(),
+                          userId: HSUserAuthSDK.getUser()!.uid);
+
+                      HSUserAuthSDK.signOut();
+                      context.goNamed(RouteNames.auth);
                     },
                     child: ClipOval(
                       child: Image.asset(

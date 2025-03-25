@@ -16,4 +16,5 @@ app.get("/",(req,res)=> {
 
 app.listen(PORT,()=>{
     console.log("Hershield Backend is working");
+    console.log("Backend is working on http://localhost:3000/");
 })

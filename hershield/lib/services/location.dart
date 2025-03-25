@@ -1,8 +1,11 @@
+import 'package:hershield/apis/auth/user_auth.dart';
+import 'package:hershield/apis/location_api.dart';
 import '../helper/log.dart';
 import 'package:location/location.dart';
 
+LocationApi locationApi = LocationApi();
 
-Future<LocationData?> getForegroundLocation() async {
+Future<LocationData?> getLocation() async {
   Location location = Location();
 
   try {
@@ -30,8 +33,15 @@ Future<LocationData?> getForegroundLocation() async {
 
     // Fetch and return the location data
     LocationData locationData = await location.getLocation();
-    hsLog(
-        "Foreground Location: ${locationData.latitude}, ${locationData.longitude}");
+    hsLog("Location: ${locationData.latitude}, ${locationData.longitude}");
+
+    //update user location
+    await locationApi.updateUserLocation(
+        lat: locationData.latitude.toString(),
+        long: locationData.longitude.toString(),
+        userId: HSUserAuthSDK.getUser()!.uid);
+
+
     return locationData;
   } catch (e) {
     hsLog("Error fetching foreground location: $e");

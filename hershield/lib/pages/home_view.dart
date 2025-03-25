@@ -8,7 +8,6 @@ import 'package:hershield/router.dart';
 import 'package:hershield/services/location.dart';
 import 'package:hershield/services/user_permission.dart';
 import 'package:hershield/widget/location_permission_view.dart';
-import 'package:workmanager/workmanager.dart';
 
 class HomeView extends StatefulWidget {
   final StatefulNavigationShell navigationShell;
@@ -34,8 +33,7 @@ class _HomeViewState extends State<HomeView> {
   Future<void> serviceShield() async {
     await _getUserProfile();
     await askLocation();
-    registerBackgroundTask();
-    getForegroundLocation();
+    getLocation();
   }
 
   Future<void> askLocation() async {
@@ -48,16 +46,7 @@ class _HomeViewState extends State<HomeView> {
     }
   }
 
-  void registerBackgroundTask() {
-    hsLog('request backgorund task working!!');
-    Workmanager().registerPeriodicTask(
-      "fetchLocationTask",
-      "fetchLocation",
-      frequency: const Duration(minutes: 15), // Every 2 hours
-      initialDelay: const Duration(seconds: 10),
-    );
-    hsLog("Task regsitered");
-  }
+
 
   Future<void> _getUserProfile() async {
     try {

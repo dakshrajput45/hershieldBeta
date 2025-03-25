@@ -13,6 +13,7 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "firebase-admin": "^13.0.1",
+    "geofire-common": "^6.0.0",
     "haversine-distance": "^1.2.3",
     "nodemon": "^3.1.7"
   }
