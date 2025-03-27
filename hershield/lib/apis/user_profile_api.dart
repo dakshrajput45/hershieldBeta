@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:hershield/helper/log.dart';
 import 'package:hershield/models/user_model.dart';
 
@@ -34,7 +35,7 @@ class HSUserApis {
     }
   }
 
-  static Future<void> updateFcmToken(String token) async {
+  static Future<void> updateFcmToken({required String token}) async {
     try {
       String userId = HSUserAuthSDK.getUser()!.uid;
       await _db.collection(_userCollectionPath).doc(userId).set({

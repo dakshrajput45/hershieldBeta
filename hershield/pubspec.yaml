@@ -30,6 +30,9 @@ dependencies:
   permission_handler:
   google_sign_in: ^6.2.1
   cloud_firestore:
+  firebase_messaging: 
+  flutter_local_notifications: 
+  flutter_web_browser: ^0.17.3
 
 dev_dependencies:
   flutter_test:

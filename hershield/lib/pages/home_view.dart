@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hershield/apis/auth/user_auth.dart';
+import 'package:hershield/apis/user_profile_api.dart';
 import 'package:hershield/helper/loader.dart';
 import 'package:hershield/helper/log.dart';
 import 'package:hershield/pages/home_controller.dart';
 import 'package:hershield/router.dart';
 import 'package:hershield/services/location.dart';
+import 'package:hershield/services/notifications.dart';
 import 'package:hershield/services/user_permission.dart';
 import 'package:hershield/widget/location_permission_view.dart';
 
@@ -31,6 +33,7 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Future<void> serviceShield() async {
+    await HSNotificationService.initialize();
     await _getUserProfile();
     await askLocation();
     getLocation();
@@ -41,12 +44,12 @@ class _HomeViewState extends State<HomeView> {
       await isLocationAlwaysGranted()
           ? hsLog("location permission is granted")
           : showLocationPermissionDialog(context);
+
+      await requestAndroidNotifications();
     } catch (e) {
       hsLog("Error Asking location: $e");
     }
   }
-
-
 
   Future<void> _getUserProfile() async {
     try {

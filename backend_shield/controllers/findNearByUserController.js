@@ -1,15 +1,19 @@
 const { db } = require("../config/firebaseConnect");
 const haversine = require("haversine-distance");
 const geofire = require("geofire-common");
+const {sendNotifications} = require("../services/sendNotifications");
 const collection = "userDetails";
 const radiusInMeters = Number(process.env.radiusInMeters)
-exports.findNearByUser = async(req,res)=> {
-    try{
-        const {uid} = req.query;
+exports.findNearByUser = async (req, res) => {
+    try {
+        const { uid } = req.query;
+        console.log("uid:-", uid);
 
         if (!uid) {
-            return res.status(400).json({ success: false, 
-                                        message: "User ID is required" });
+            return res.status(400).json({
+                success: false,
+                message: "User ID is required"
+            });
         }
 
         const userRef = db.collection(collection).doc(uid);
@@ -32,6 +36,7 @@ exports.findNearByUser = async(req,res)=> {
         console.log(`📌 Geohash Bounds:`, bounds);
 
         let nearbyUsers = [];
+        let tokens = [];
 
         const promises = bounds.map(([start, end]) => {
             return db.collection(collection)
@@ -42,11 +47,11 @@ exports.findNearByUser = async(req,res)=> {
 
         const snapshots = await Promise.all(promises);
 
-        snapshots.forEach(snapshot=> {
-            snapshot.docs.forEach(doc=>{
+        snapshots.forEach(snapshot => {
+            snapshot.docs.forEach(doc => {
                 const user = doc.data();
-            
-                if(user.id !== uid) {
+
+                if (user.id !== uid) {
                     const userLat = user.location.coordinates.latitude;
                     const userLong = user.location.coordinates.longitude;
 
@@ -54,18 +59,35 @@ exports.findNearByUser = async(req,res)=> {
 
                     if (distance <= radiusInMeters) {
                         nearbyUsers.push({
-                            uid: user.uid,
-                            name: `${user.firstName} ${user.lastName}` || "Unknown",
-                            fcmToken: user.fcmToken || "",
+                            id: user.uid,
+                            firstName: user.firstName,
+                            lastName: user.lastName,
+                            fcmtoken: user.fcmtoken || "",
                             distance: distance.toFixed(2),
                             latitude: userLat,
                             longitude: userLong,
                         });
+                        if (user.fcmtoken) {
+                            tokens.push(user.fcmtoken);
+                        }
                     }
                 }
             })
-        })
+        });
+
         
+        if (tokens.length === 0) {
+            return res.status(200).json({ success: false, message: "No nearby users found" });
+        }
+
+        const sosData = {
+            uid: uid.toString(),  
+            latitude: userData.location.coordinates.latitude.toString(), 
+            longitude: userData.location.coordinates.longitude.toString()
+        };        
+
+        await sendNotifications(tokens, sosData);
+
         console.log(`✅ Found ${nearbyUsers.length} nearby users`);
         return res.status(200).json({ success: true, nearbyUsers });
     } catch (error) {

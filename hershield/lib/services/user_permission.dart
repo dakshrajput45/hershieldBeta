@@ -1,3 +1,5 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
+
 import '../helper/log.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -32,4 +34,21 @@ Future<bool> isLocationAlwaysGranted() async {
     //isLocationAlwaysGranted();
   }
   return false;
+}
+
+Future<void> requestAndroidNotifications() async {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  // This is optional for Android (FCM handles it automatically)
+  NotificationSettings settings = await messaging.requestPermission(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+
+  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+    hsLog('✅ Android notifications enabled');
+  } else {
+    hsLog('⚠️ Android notifications might be restricted');
+  }
 }
