@@ -77,7 +77,7 @@ exports.findNearByUser = async (req, res) => {
 
         
         if (tokens.length === 0) {
-            return res.status(200).json({ success: false, message: "No nearby users found" });
+            return res.status(203).json({ success: false, message: "No nearby users found" });
         }
 
         const sosData = {
