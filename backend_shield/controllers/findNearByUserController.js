@@ -1,7 +1,7 @@
 const { db } = require("../config/firebaseConnect");
 const haversine = require("haversine-distance");
 const geofire = require("geofire-common");
-const {sendNotifications} = require("../services/sendNotifications");
+const { sendNotifications } = require("../utils/sendNotifications");
 const collection = "userDetails";
 const radiusInMeters = Number(process.env.radiusInMeters)
 exports.findNearByUser = async (req, res) => {
@@ -32,8 +32,6 @@ exports.findNearByUser = async (req, res) => {
         const center = [latitude, longitude];
         //geo fire
         const bounds = geofire.geohashQueryBounds(center, radiusInMeters);
-
-        console.log(`📌 Geohash Bounds:`, bounds);
 
         let nearbyUsers = [];
         let tokens = [];
@@ -75,23 +73,22 @@ exports.findNearByUser = async (req, res) => {
             })
         });
 
-        
         if (tokens.length === 0) {
             return res.status(203).json({ success: false, message: "No nearby users found" });
         }
 
         const sosData = {
-            uid: uid.toString(),  
-            latitude: userData.location.coordinates.latitude.toString(), 
-            longitude: userData.location.coordinates.longitude.toString()
-        };        
+            uid: uid.toString(),
+            latitude: latitude.toString(),
+            longitude: longitude.toString()
+        };
 
         await sendNotifications(tokens, sosData);
 
         console.log(`✅ Found ${nearbyUsers.length} nearby users`);
-        return res.status(200).json({ success: true, nearbyUsers });
+        return res.status(200).json({ success: true, nearbyUsers, message: `${nearbyUsers.length} users are found` });
     } catch (error) {
-        console.error("Error updating location:", error.message);
-        return res.status(500).json({ success: false, error: error.message, message: "Location update failed" });
+        console.error("Error Finding near by user location:", error.message);
+        return res.status(500).json({ success: false, error: error.message, message: "Finding near by user failed" });
     }
 };

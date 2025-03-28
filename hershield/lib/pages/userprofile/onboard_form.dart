@@ -8,7 +8,6 @@ import 'package:hershield/models/user_model.dart';
 import 'package:hershield/pages/home_controller.dart';
 import 'package:hershield/pages/userprofile/emergency_contact.dart';
 import 'package:hershield/pages/userprofile/user_controller.dart';
-import 'package:hershield/theme.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as path;
@@ -25,10 +24,9 @@ class _OnboardingFormViewState extends State<OnboardingFormView>
     with TickerProviderStateMixin {
   // Separate keys for each form
   final _personalDetailsFormKey = GlobalKey<FormState>();
-  final _additionalInfoFormKey = GlobalKey<FormState>();
 
   late TabController tabController =
-      TabController(length: 3, vsync: this, initialIndex: 0);
+      TabController(length: 2, vsync: this, initialIndex: 0);
   final HSDobValidator _hsDobValidator = HSDobValidator();
 
   File? _imageFile;
@@ -41,7 +39,7 @@ class _OnboardingFormViewState extends State<OnboardingFormView>
     if (HSProfileController.getProfile()?.id != null) {
       TextControl.populateControllers(HSProfileController.getProfile()!);
     }
-    tabController = TabController(length: 3, vsync: this); // 2 tabs
+    tabController = TabController(length: 2, vsync: this); // 2 tabs
   }
 
   var defaultImage =
@@ -131,9 +129,9 @@ class _OnboardingFormViewState extends State<OnboardingFormView>
 
                           // First Name
                           TextFormField(
-                            controller: TextControl.firstNameController,
+                            controller: TextControl.nameController,
                             decoration: InputDecoration(
-                              hintText: 'First Name',
+                              hintText: 'name',
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(8),
                               ),
@@ -148,21 +146,21 @@ class _OnboardingFormViewState extends State<OnboardingFormView>
                           const SizedBox(height: 10),
 
                           // Last Name
-                          TextFormField(
-                            controller: TextControl.lastNameController,
-                            decoration: InputDecoration(
-                              hintText: 'Last Name',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your last name';
-                              }
-                              return null;
-                            },
-                          ),
+                          // TextFormField(
+                          //   controller: TextControl.lastNameController,
+                          //   decoration: InputDecoration(
+                          //     hintText: 'Last Name',
+                          //     border: OutlineInputBorder(
+                          //       borderRadius: BorderRadius.circular(8),
+                          //     ),
+                          //   ),
+                          //   validator: (value) {
+                          //     if (value == null || value.isEmpty) {
+                          //       return 'Please enter your last name';
+                          //     }
+                          //     return null;
+                          //   },
+                          // ),
                           const SizedBox(height: 10),
 
                           // Phone Number
@@ -262,129 +260,129 @@ class _OnboardingFormViewState extends State<OnboardingFormView>
               ),
             ),
           ),
-          Tab(
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  // Logo and Tagline Section at the Top
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Column(
-                      children: [
-                        // Tagline Text
-                        Text(
-                          'HerShield',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: primaryTextColor,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        Text(
-                          'Help is just a moment away!!',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                            color: primaryTextColor,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 10),
-                        // Data Safety Information
-                        Text(
-                          'Your data is secure and handled with utmost care. Rest assured, our shield ensures your information stays private and protected.',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.normal,
-                            color: Theme.of(context).colorScheme.onSurface,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
-                    ),
-                  ),
-                  // The Form Section
+          // Tab(
+          //   child: SingleChildScrollView(
+          //     child: Column(
+          //       mainAxisAlignment: MainAxisAlignment.start,
+          //       children: [
+          //         // Logo and Tagline Section at the Top
+          //         Padding(
+          //           padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          //           child: Column(
+          //             children: [
+          //               // Tagline Text
+          //               Text(
+          //                 'HerShield',
+          //                 style: TextStyle(
+          //                   fontSize: 24,
+          //                   fontWeight: FontWeight.bold,
+          //                   color: primaryTextColor,
+          //                 ),
+          //                 textAlign: TextAlign.center,
+          //               ),
+          //               Text(
+          //                 'Help is just a moment away!!',
+          //                 style: TextStyle(
+          //                   fontSize: 24,
+          //                   fontWeight: FontWeight.bold,
+          //                   color: primaryTextColor,
+          //                 ),
+          //                 textAlign: TextAlign.center,
+          //               ),
+          //               const SizedBox(height: 10),
+          //               // Data Safety Information
+          //               Text(
+          //                 'Your data is secure and handled with utmost care. Rest assured, our shield ensures your information stays private and protected.',
+          //                 style: TextStyle(
+          //                   fontSize: 16,
+          //                   fontWeight: FontWeight.normal,
+          //                   color: Theme.of(context).colorScheme.onSurface,
+          //                 ),
+          //                 textAlign: TextAlign.center,
+          //               ),
+          //             ],
+          //           ),
+          //         ),
+          //         // The Form Section
 
-                  Form(
-                    key: _additionalInfoFormKey, // Assign the form key
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        children: [
-                          // City Input
-                          TextFormField(
-                            controller: TextControl.cityController,
-                            decoration: InputDecoration(
-                              hintText: 'City',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(
-                                    12), // Rounded corners
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 15, horizontal: 10),
-                              filled: true,
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your city';
-                              }
-                              return null;
-                            },
-                          ),
-                          const SizedBox(height: 15),
-                          // State Input
-                          TextFormField(
-                            controller: TextControl.stateController,
-                            decoration: InputDecoration(
-                              hintText: 'State',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 15, horizontal: 10),
-                              filled: true,
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your state';
-                              }
-                              return null;
-                            },
-                          ),
-                          const SizedBox(height: 15),
-                          // Country Input
-                          TextFormField(
-                            controller: TextControl.countryController,
-                            decoration: InputDecoration(
-                              hintText: 'Country',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 15, horizontal: 10),
-                              filled: true,
-                            ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your country';
-                              }
-                              return null;
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  TabNavigationButtons(
-                    tabController: tabController,
-                    additionalInfoFormKey: _additionalInfoFormKey,
-                  ),
-                ],
-              ),
-            ),
-          ),
+          //         Form(
+          //           key: _additionalInfoFormKey, // Assign the form key
+          //           child: Padding(
+          //             padding: const EdgeInsets.all(16.0),
+          //             child: Column(
+          //               children: [
+          //                 // City Input
+          //                 TextFormField(
+          //                   controller: TextControl.cityController,
+          //                   decoration: InputDecoration(
+          //                     hintText: 'City',
+          //                     border: OutlineInputBorder(
+          //                       borderRadius: BorderRadius.circular(
+          //                           12), // Rounded corners
+          //                     ),
+          //                     contentPadding: const EdgeInsets.symmetric(
+          //                         vertical: 15, horizontal: 10),
+          //                     filled: true,
+          //                   ),
+          //                   validator: (value) {
+          //                     if (value == null || value.isEmpty) {
+          //                       return 'Please enter your city';
+          //                     }
+          //                     return null;
+          //                   },
+          //                 ),
+          //                 const SizedBox(height: 15),
+          //                 // State Input
+          //                 TextFormField(
+          //                   controller: TextControl.stateController,
+          //                   decoration: InputDecoration(
+          //                     hintText: 'State',
+          //                     border: OutlineInputBorder(
+          //                       borderRadius: BorderRadius.circular(12),
+          //                     ),
+          //                     contentPadding: const EdgeInsets.symmetric(
+          //                         vertical: 15, horizontal: 10),
+          //                     filled: true,
+          //                   ),
+          //                   validator: (value) {
+          //                     if (value == null || value.isEmpty) {
+          //                       return 'Please enter your state';
+          //                     }
+          //                     return null;
+          //                   },
+          //                 ),
+          //                 const SizedBox(height: 15),
+          //                 // Country Input
+          //                 TextFormField(
+          //                   controller: TextControl.countryController,
+          //                   decoration: InputDecoration(
+          //                     hintText: 'Country',
+          //                     border: OutlineInputBorder(
+          //                       borderRadius: BorderRadius.circular(12),
+          //                     ),
+          //                     contentPadding: const EdgeInsets.symmetric(
+          //                         vertical: 15, horizontal: 10),
+          //                     filled: true,
+          //                   ),
+          //                   validator: (value) {
+          //                     if (value == null || value.isEmpty) {
+          //                       return 'Please enter your country';
+          //                     }
+          //                     return null;
+          //                   },
+          //                 ),
+          //               ],
+          //             ),
+          //           ),
+          //         ),
+          //         TabNavigationButtons(
+          //           tabController: tabController,
+          //           additionalInfoFormKey: _additionalInfoFormKey,
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          // ),
           const Tab(
             child: EmergencyContactForm(),
           ),
@@ -542,10 +540,7 @@ class _OnboardingFormViewState extends State<OnboardingFormView>
 
 class TextControl {
   static final TextEditingController urlController = TextEditingController();
-  static final TextEditingController firstNameController =
-      TextEditingController();
-  static final TextEditingController lastNameController =
-      TextEditingController();
+  static final TextEditingController nameController = TextEditingController();
   static final TextEditingController aadharController = TextEditingController();
   static final TextEditingController dobController = TextEditingController();
   static final TextEditingController cityController = TextEditingController();
@@ -562,16 +557,12 @@ class TextControl {
 
   /// Populates the controllers using an HSUser instance
   static void populateControllers(HSUser user) {
-    firstNameController.text = user.firstName ?? '';
-    lastNameController.text = user.lastName ?? '';
+    nameController.text = user.name ?? '';
     mobileController.text = user.mobileNo ?? '';
     aadharController.text = user.aadharCard ?? '';
     dobController.text = user.dateOfBirth != null
         ? DateFormat("MM/dd/yyyy").format(user.dateOfBirth!)
         : '';
-    cityController.text = user.address?.city ?? '';
-    stateController.text = user.address?.state ?? '';
-    countryController.text = user.address?.country ?? '';
     selectedGender = user.gender ?? 'Male'; // Default to Male if not set
     imageUrl = user.profileImage;
   }
@@ -579,8 +570,7 @@ class TextControl {
   /// Clears all controllers
   static void dispose() {
     urlController.dispose();
-    firstNameController.dispose();
-    lastNameController.dispose();
+    nameController.dispose();
     aadharController.dispose();
     dobController.dispose();
     cityController.dispose();
@@ -728,48 +718,40 @@ class _TabNavigationButtonsState extends State<TabNavigationButtons> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween, // Center the buttons
       children: [
         // Back Button
-        widget.tabController.index > 0
-            ? TextButton(
-                onPressed: () {
-                  if (widget.tabController.index > 0) {
-                    widget.tabController.animateTo(
-                      widget.tabController.index - 1,
-                      duration: const Duration(milliseconds: 200),
-                    );
-                    ;
-                  }
-                },
-                child: const Text(
-                  "Back",
-                  style: TextStyle(fontSize: 16),
-                ),
-              )
-            : const SizedBox.shrink(),
+        // TextButton(
+        //   onPressed: () {
+        //     if (widget.tabController.index > 0) {
+        //       widget.tabController.animateTo(
+        //         widget.tabController.index - 1,
+        //         duration: const Duration(milliseconds: 200),
+        //       );
+        //     }
+        //   },
+        //   child: const Text(
+        //     "Back",
+        //     style: TextStyle(fontSize: 16),
+        //   ),
+        // ),
+        //: const SizedBox.shrink(),
         const SizedBox(width: 20), // Add space between buttons
         // Next Button
-        widget.tabController.index < 2
-            ? TextButton(
-                onPressed: () {
-                  if (widget.tabController.index == 0 &&
-                      widget.personalDetailsFormKey!.currentState!.validate()) {
-                    widget.tabController.animateTo(
-                      widget.tabController.index + 1,
-                      duration: const Duration(milliseconds: 200),
-                    );
-                  } else if (widget.tabController.index == 1) {
-                    widget.tabController.animateTo(
-                      widget.tabController.index + 1,
-                      duration: const Duration(milliseconds: 200),
-                    );
-                    saveUserDetails();
-                  }
-                },
-                child: const Text(
-                  "Next",
-                  style: TextStyle(fontSize: 16),
-                ),
-              )
-            : const SizedBox.shrink(),
+        TextButton(
+          onPressed: () {
+            if (widget.tabController.index == 0 &&
+                widget.personalDetailsFormKey!.currentState!.validate()) {
+              widget.tabController.animateTo(
+                widget.tabController.index + 1,
+                duration: const Duration(milliseconds: 200),
+              );
+            }
+            saveUserDetails();
+          },
+          child: const Text(
+            "Next",
+            style: TextStyle(fontSize: 16),
+          ),
+        )
+        // : const SizedBox.shrink(),
       ],
     );
   }
@@ -777,20 +759,15 @@ class _TabNavigationButtonsState extends State<TabNavigationButtons> {
   Future<void> saveUserDetails() async {
     HSUser user = HSUser(
       id: HSUserAuthSDK.getUser()!.uid,
-      firstName: TextControl.firstNameController.text,
-      lastName: TextControl.lastNameController.text,
+      name: TextControl.nameController.text,
       aadharCard: TextControl.aadharController.text,
-      address: HSUserAddress(
-          city: TextControl.cityController.text,
-          state: TextControl.stateController.text,
-          country: TextControl.countryController.text),
       email: HSUserAuthSDK.getUser()!.email,
       dateOfBirth: TextControl.dateOfBirth,
       gender: TextControl.selectedGender,
       mobileNo: TextControl.mobileController.text,
       profileImage: TextControl.imageUrl,
     );
-    hsLog(user);
+
     await HSUserController.updateUser(
             user: user, userId: HSUserAuthSDK.getUser()!.uid)
         .then((v) => {hsLog("User Updated Succesfully")});

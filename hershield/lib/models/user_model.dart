@@ -2,12 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HSUser {
   String? id;
-  String? firstName;
-  String? lastName;
+  String? name;
   String? mobileNo;
   String? email;
   DateTime? dateOfBirth;
-  HSUserAddress? address;
+  //HSUserAddress? address;
   String? profileImage;
   String? fcmToken;
   String? aadharCard;
@@ -18,9 +17,8 @@ class HSUser {
   HSUser({
     this.id,
     this.email,
-    this.firstName,
-    this.lastName,
-    this.address,
+    this.name,
+   // this.address,
     this.dateOfBirth,
     this.profileImage,
     this.fcmToken,
@@ -36,11 +34,10 @@ class HSUser {
   return HSUser(
     id: json['id'],
     email: json['email'],
-    firstName: json['firstName'],
-    lastName: json['lastName'],
-    address: json['address'] != null
-        ? HSUserAddress.fromJson(json: json['address'])
-        : null,
+    name: json['name'],
+    // address: json['address'] != null
+    //     ? HSUserAddress.fromJson(json: json['address'])
+    //     : null,
     dateOfBirth: (json['dateOfBirth'] != null)
         ? (json['dateOfBirth'] as Timestamp).toDate()
         : null,
@@ -64,9 +61,8 @@ class HSUser {
     return {
       if (id != null) 'id': id,
       if (email != null) 'email': email,
-      if (firstName != null) 'firstName': firstName,
-      if (lastName != null) 'lastName': lastName,
-      if (address != null) 'address': address?.toJson(),
+      if (name != null) 'name': name,
+      //if (address != null) 'address': address?.toJson(),
       if (dateOfBirth != null) 'dateOfBirth': Timestamp.fromDate(dateOfBirth!),
       if (profileImage != null) 'profileImage': profileImage,
       if (fcmToken != null) 'fcmToken': fcmToken,

@@ -33,7 +33,7 @@ class _UserProfileViewState extends State<UserProfileView> {
                     child: Container(
                       height: 120,
                       width: 120,
-                      margin: const EdgeInsets.only(top: 90, bottom: 10),
+                      margin: const EdgeInsets.only(top: 120, bottom: 10),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle, // Set shape to circle
                         color: Colors.grey.shade200,
@@ -62,7 +62,8 @@ class _UserProfileViewState extends State<UserProfileView> {
               ),
               // Username text
               Text(
-                "${HSProfileController.getProfile()?.firstName} ${HSProfileController.getProfile()?.lastName}",
+                HSProfileController.getProfile()?.name ??
+                    "Guest User", // Default text if null
                 style: TextStyle(
                   fontSize: 2.8.sh,
                   fontWeight: FontWeight.bold,
@@ -70,18 +71,8 @@ class _UserProfileViewState extends State<UserProfileView> {
                 ),
                 textAlign: TextAlign.center, // Center the text
               ),
-              // Address text
-              Text(
-                "${HSProfileController.getProfile()?.address?.city ?? " "} ${HSProfileController.getProfile()?.address?.state ?? " "} ${HSProfileController.getProfile()?.address?.country ?? " "}",
-                style: TextStyle(
-                  fontSize: 1.8.sh,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                ),
-                textAlign: TextAlign.center, // Center the text
-              ),
               // Buttons below the text
-              const SizedBox(height: 40), // Space between text and buttons
+              const SizedBox(height: 30), // Space between text and buttons
               Row(
                 mainAxisAlignment:
                     MainAxisAlignment.spaceEvenly, // Space buttons evenly

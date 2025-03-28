@@ -33,6 +33,7 @@ dependencies:
   firebase_messaging: 
   flutter_local_notifications: 
   flutter_web_browser: ^0.17.3
+  font_awesome_flutter:
 
 dev_dependencies:
   flutter_test:

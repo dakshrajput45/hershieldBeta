@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_web_browser/flutter_web_browser.dart';
 import 'package:hershield/apis/auth/user_auth.dart';
 import 'package:hershield/apis/sos_api.dart';
 import 'package:hershield/helper/loader_sos.dart';
-import 'package:hershield/models/user_model.dart';
+import 'package:hershield/helper/log.dart';
+import 'package:hershield/models/safe_places_model.dart';
 
 class SosView extends StatefulWidget {
   const SosView({super.key});
@@ -11,19 +13,36 @@ class SosView extends StatefulWidget {
 }
 
 class _SosViewState extends State<SosView> {
-  bool isLoading = false; // Loading state for API call
+  bool isLoading = false;
   SosApi sosApi = SosApi();
   int nearbyUsers = 0;
+  List<HSSafePlace> safePlaces = [];
+  String directionsUrl = "";
 
   Future<int> _fetchNearbyUsers() async {
     try {
-      final List<HSUser>? users = await sosApi.findNearByUser(
+      return await sosApi.findNearByUser(
         userId: HSUserAuthSDK.getUser()!.uid,
       );
-      return users?.length ?? 0;
     } catch (e) {
-      // In case of an error, return 0 users
       return 0;
+    }
+  }
+
+  Future<void> _fetchSafePlaces() async {
+    try {
+      SafePlacesResult result = await sosApi.findNearBySafePlaces(
+        userId: HSUserAuthSDK.getUser()!.uid,
+      );
+
+      if (result.places != null) {
+        setState(() {
+          safePlaces = result.places!;
+          directionsUrl = result.directionsUrl!; // Store the directions URL
+        });
+      }
+    } catch (e) {
+      hsLog("Error fetching safe places: $e");
     }
   }
 
@@ -32,32 +51,159 @@ class _SosViewState extends State<SosView> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          content: Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: 10.0, vertical: 2.0), // Reduced vertical padding
-            child: Text(
-              nearbyUsers > 0
-                  ? 'We have found $nearbyUsers people nearby and have notified them.\nStay calm, help is just a moment away! 💙'
-                  : 'Unfortunately, we couldn’t find any nearby users at the moment. Please try again later and be safe!!',
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.black87,
-                fontWeight: FontWeight.w400,
-                fontFamily: 'Roboto',
+          content: Text(
+            nearbyUsers > 0
+                ? 'We have found $nearbyUsers people nearby and have notified them.\nStay calm, help is just a moment away! 💙'
+                : 'Unfortunately, we couldn’t find any nearby users at the moment. Please try again later and be safe!!',
+            textAlign: TextAlign.justify,
+            style: const TextStyle(fontSize: 16, color: Colors.black87),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                _showSafePlacesDialog(); // Show safe places after closing first dialog
+              },
+              child: const Text(
+                'OK, Show Safe Places',
+                style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFF6C4AB6)),
               ),
-              textAlign: TextAlign.justify, // Justify text alignment
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showSafePlacesDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text(
+            "Safe Places Nearby",
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+          content: SizedBox(
+            width: double.maxFinite, // Ensures proper width
+            child: SingleChildScrollView(
+              // Makes it scrollable
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (safePlaces.isNotEmpty) ...[
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 6.0),
+                      child: Column(
+                        children: [
+                          Text(
+                            "We have found some nearest safe places for you. Tap to see the locations. Be safe!",
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            textAlign: TextAlign.justify,
+                            style: TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.w600),
+                          ),
+                          Text(
+                            "Help is just moments away 💙",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 14, fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 1),
+
+                    // 📌 Directions URL (Top)
+                    ListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 6.0, vertical: 2.0),
+                      title: const Text(
+                        "Best Route to Safe Places",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 14),
+                      ),
+                      subtitle: const Text(
+                        "Tap to open directions.",
+                        style: TextStyle(fontSize: 12),
+                      ),
+                      leading: Icon(Icons.directions,
+                          color: Theme.of(context).colorScheme.primary,
+                          size: 24),
+                      onTap: () async {
+                        await FlutterWebBrowser.openWebPage(url: directionsUrl);
+                      },
+                    ),
+
+                    const Divider(),
+
+                    // 📌 Individual Safe Places
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 6.0),
+                      child: Text(
+                        "Individual safe locations",
+                        textAlign: TextAlign.left,
+                        style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+
+                    ...safePlaces.map(
+                      (place) => ListTile(
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 6.0, vertical: 0.0),
+                        title: Text(
+                          place.name ?? 'Unknown',
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 15),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        subtitle: Text(
+                          "${place.type} - ${place.distance} km away",
+                          style: const TextStyle(fontSize: 14),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        leading: Icon(Icons.location_pin,
+                            color: Theme.of(context).colorScheme.primary,
+                            size: 22),
+                        onTap: () async {
+                          String url =
+                              'https://www.google.com/maps?q=${place.lat},${place.lon}';
+                          await FlutterWebBrowser.openWebPage(
+                              url: place.mapsUrl ?? url);
+                        },
+                      ),
+                    ),
+                  ] else ...[
+                    // 📌 No Safe Places Found
+                    const Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
+                      child: Text(
+                        "No safe places found. Stay strong! 💙",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(fontSize: 14),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
             ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: const Text(
-                'OK, Thank you!',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFF6C4AB6), // Calm purple tone
-                ),
+                "OK, Thank You!",
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold,color: Color(0xFF6C4AB6)),
               ),
             ),
           ],
@@ -72,7 +218,6 @@ class _SosViewState extends State<SosView> {
       backgroundColor: Theme.of(context).colorScheme.onTertiary,
       body: Stack(
         children: [
-          // Main content
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
@@ -86,10 +231,9 @@ class _SosViewState extends State<SosView> {
                   'EMERGENCY\nHELP NEEDED?',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 30,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black),
                 ),
                 const SizedBox(height: 10),
                 Text(
@@ -100,23 +244,13 @@ class _SosViewState extends State<SosView> {
                 const SizedBox(height: 60),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    shape: const CircleBorder(),
-                    elevation: 10,
-                  ),
+                      shape: const CircleBorder(), elevation: 10),
                   onPressed: () async {
-                    setState(() {
-                      isLoading = true; // Set loading state to true
-                    });
-
-                    // Fetch nearby users
+                    setState(() => isLoading = true);
                     nearbyUsers = await _fetchNearbyUsers();
-
-                    // Show result dialog after the fetching is complete
                     _showResultDialog(nearbyUsers);
-
-                    setState(() {
-                      isLoading = false; // Set loading state to false
-                    });
+                    await _fetchSafePlaces();
+                    setState(() => isLoading = false);
                   },
                   child: ClipOval(
                     child: Image.asset(
@@ -136,7 +270,6 @@ class _SosViewState extends State<SosView> {
               ],
             ),
           ),
-          // Show loader when `isLoading` is true
           if (isLoading) const BlurredBackgroundLoaderSOS(),
         ],
       ),

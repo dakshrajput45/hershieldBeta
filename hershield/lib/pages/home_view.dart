@@ -1,9 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hershield/apis/auth/user_auth.dart';
 import 'package:hershield/apis/user_profile_api.dart';
 import 'package:hershield/helper/loader.dart';
 import 'package:hershield/helper/log.dart';
+import 'package:hershield/models/user_model.dart';
 import 'package:hershield/pages/home_controller.dart';
 import 'package:hershield/router.dart';
 import 'package:hershield/services/location.dart';
@@ -33,6 +35,7 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Future<void> serviceShield() async {
+    hsLog("Hershield Enters");
     await HSNotificationService.initialize();
     await _getUserProfile();
     await askLocation();
@@ -64,11 +67,17 @@ class _HomeViewState extends State<HomeView> {
       hsLog("user at home: ${user?.toJson()}");
 
       /// register new user
-      if (user == null) {
-        context.goNamed(
-          RouteNames.onboard,
-          extra: true,
-        );
+      if (user?.id == null) {
+        User? userGoogle = await HSUserAuthSDK.googleSignUp();
+        HSUser userObj = HSUser(
+            id: userGoogle?.uid,
+            email: userGoogle?.email,
+            name: userGoogle?.displayName,
+            profileImage: userGoogle?.photoURL);
+
+        await HSUserApis.updateUserDetails(
+            userId: userGoogle!.uid, user: userObj);
+        _getUserProfile();
       }
       setState(() {
         _isLoading = false;
