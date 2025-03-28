@@ -225,7 +225,7 @@ class _SosViewState extends State<SosView> {
               children: [
                 Image.asset(
                   'assets/images/logoShield.png',
-                  height: 150,
+                  height: 200,
                 ),
                 const Text(
                   'EMERGENCY\nHELP NEEDED?',
